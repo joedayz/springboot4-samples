@@ -1,0 +1,54 @@
+spring:
+  config:
+    import: optional:file:.env[.properties]
+
+api:
+  endpoint:
+    host: api.example.com
+
+endpoint:
+  url: https://${api.endpoint.host}/
+
+example:
+  format: "A format for %s unit"
+  debug-flag: true
+  unit: yard
+  user:
+    username: student
+    email: student@redhat.com
+
+expense:
+  debug-enabled: true
+  debug-message: "Range [${expense.range-low}, ${expense.range-high}]"
+  range-high: 1024
+  range-low: 100
+
+---
+spring:
+  config:
+    activate:
+      on-profile: dev
+example:
+  user:
+    username: devstudent
+expense:
+  range-low: 500
+
+---
+spring:
+  config:
+    activate:
+      on-profile: test
+example:
+  user:
+    username: teststudent
+    email: student@testing.com
+
+---
+spring:
+  config:
+    activate:
+      on-profile: stage
+example:
+  user:
+    username: stagestudent
