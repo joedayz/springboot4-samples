@@ -1,7 +1,7 @@
 # LAB 2: SPRING BOOT CONFIG
 
 **Autor:** José Díaz  
-**Github Repo:** https://github.com/joedayz/quarkus-bcp-2025.git
+**Github Repo:** https://github.com/joedayz/springboot4-samples.git
 
 ## 1. Cargar en su IDE el proyecto 01-develop-config-start
 
