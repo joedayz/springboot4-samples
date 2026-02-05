@@ -46,7 +46,21 @@ Invalid amount: 33
 
 Usa `255` como argumento y verifica la salida.
 
+### Linux/Mac
+
 ```bash
+mvn spring-boot:run -Dspring-boot.run.arguments=255
+```
+
+### Windows (CMD)
+
+```cmd
+mvn spring-boot:run -Dspring-boot.run.arguments=255
+```
+
+### Windows (PowerShell)
+
+```powershell
 mvn spring-boot:run -Dspring-boot.run.arguments=255
 ```
 
@@ -111,7 +125,21 @@ expense:
 
 ## 8. Ejecuta nuevamente la aplicación
 
+### Linux/Mac
+
 ```bash
+mvn spring-boot:run -Dspring-boot.run.arguments=255
+```
+
+### Windows (CMD)
+
+```cmd
+mvn spring-boot:run -Dspring-boot.run.arguments=255
+```
+
+### Windows (PowerShell)
+
+```powershell
 mvn spring-boot:run -Dspring-boot.run.arguments=255
 ```
 
@@ -156,8 +184,22 @@ expense:
 
 Ejecuta con perfil `dev`:
 
+### Linux/Mac
+
 ```bash
-mvn spring-boot:run -Dspring-boot.run.arguments=255 -Dspring-boot.run.profiles=dev
+SPRING_PROFILES_ACTIVE=dev mvn spring-boot:run -Dspring-boot.run.arguments=255
+```
+
+### Windows (CMD)
+
+```cmd
+set SPRING_PROFILES_ACTIVE=dev && mvn spring-boot:run -Dspring-boot.run.arguments=255
+```
+
+### Windows (PowerShell)
+
+```powershell
+$env:SPRING_PROFILES_ACTIVE="dev"; mvn spring-boot:run -Dspring-boot.run.arguments=255
 ```
 
 **Salida esperada:**
@@ -183,10 +225,37 @@ spring:
     import: optional:file:.env[.properties]
 ```
 
+Si estás usando el perfil `dev`, asegúrate de que `range-low` permita la
+sobrescritura desde `.env`:
+
+```yaml
+---
+spring:
+  config:
+    activate:
+      on-profile: dev
+expense:
+  range-low: ${EXPENSE_RANGE_LOW:500}
+```
+
 Ejecuta con perfil `dev`:
 
+### Linux/Mac
+
 ```bash
-mvn spring-boot:run -Dspring-boot.run.arguments=255 -Dspring-boot.run.profiles=dev
+SPRING_PROFILES_ACTIVE=dev mvn spring-boot:run -Dspring-boot.run.arguments=255
+```
+
+### Windows (CMD)
+
+```cmd
+set SPRING_PROFILES_ACTIVE=dev && mvn spring-boot:run -Dspring-boot.run.arguments=255
+```
+
+### Windows (PowerShell)
+
+```powershell
+$env:SPRING_PROFILES_ACTIVE="dev"; mvn spring-boot:run -Dspring-boot.run.arguments=255
 ```
 
 **Salida esperada:**
