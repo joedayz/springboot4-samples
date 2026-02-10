@@ -178,12 +178,12 @@ public interface ExpenseServiceClient {
 
 ### 6.2. Revisa el `ClientController` (estado inicial)
 
-Ubicado en: `expense-client/src/main/java/com/bcp/training/service/ClientController.java`
+Ubicado en: `expense-client/src/main/java/com/bcp/training/web/ClientController.java`
 
 Antes de modificarlo, el archivo luce así:
 
 ```java
-package com.bcp.training.service;
+package com.bcp.training.web;
 
 import com.bcp.training.client.ExpenseServiceClient;
 import com.bcp.training.model.Expense;
@@ -277,7 +277,7 @@ public class RestClientConfig {
 
 ### 7.1. Modifica `ClientController`
 
-Abre `expense-client/src/main/java/com/bcp/training/service/ClientController.java` y realiza los siguientes cambios:
+Abre `expense-client/src/main/java/com/bcp/training/web/ClientController.java` y realiza los siguientes cambios:
 
 1. Agrega las anotaciones `@RestController` y `@RequestMapping("/expenses")` a la clase
 2. Cambia el campo público `service` a `private final` e inyéctalo por constructor
@@ -287,7 +287,7 @@ Abre `expense-client/src/main/java/com/bcp/training/service/ClientController.jav
 El resultado final debe ser:
 
 ```java
-package com.bcp.training.service;
+package com.bcp.training.web;
 
 import com.bcp.training.client.ExpenseServiceClient;
 import com.bcp.training.model.Expense;
