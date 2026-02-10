@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="09da7759-4256-44a0-92c8-4941ae3f0b6c" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/02-develop-rest-start.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/jarRepositories.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../02-develop-rest-solution/LAB 3 - SPRING BOOT REST.md" beforeDir="false" afterPath="$PROJECT_DIR$/../02-develop-rest-solution/LAB 3 - SPRING BOOT REST.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../02-develop-rest-solution/expense-service/src/main/java/com/bcp/training/Expense.java" beforeDir="false" afterPath="$PROJECT_DIR$/../02-develop-rest-solution/expense-service/src/main/java/com/bcp/training/Expense.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/LAB 3 - SPRING BOOT REST.md" beforeDir="false" afterPath="$PROJECT_DIR$/LAB 3 - SPRING BOOT REST.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/expense-client/src/main/java/com/bcp/training/client/ExpenseServiceClient.java" beforeDir="false" afterPath="$PROJECT_DIR$/expense-client/src/main/java/com/bcp/training/client/ExpenseServiceClient.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/expense-client/src/main/java/com/bcp/training/service/ClientController.java" beforeDir="false" afterPath="$PROJECT_DIR$/expense-client/src/main/java/com/bcp/training/service/ClientController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/expense-service/src/main/java/com/bcp/training/Expense.java" beforeDir="false" afterPath="$PROJECT_DIR$/expense-service/src/main/java/com/bcp/training/Expense.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/expense-service/src/main/java/com/bcp/training/ExpenseController.java" beforeDir="false" afterPath="$PROJECT_DIR$/expense-service/src/main/java/com/bcp/training/ExpenseController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/expense-service/src/main/java/com/bcp/training/ExpenseService.java" beforeDir="false" afterPath="$PROJECT_DIR$/expense-service/src/main/java/com/bcp/training/ExpenseService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../03-develop-persist-solution/LAB 4 - SPRING BOOT PERSISTENT.md" beforeDir="false" afterPath="$PROJECT_DIR$/../03-develop-persist-solution/LAB 4 - SPRING BOOT PERSISTENT.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../03-develop-persist-solution/expense-service/src/main/java/com/bcp/training/model/Expense.java" beforeDir="false" afterPath="$PROJECT_DIR$/../03-develop-persist-solution/expense-service/src/main/java/com/bcp/training/model/Expense.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../03-develop-persist-start/LAB 4 - SPRING BOOT PERSISTENT.md" beforeDir="false" afterPath="$PROJECT_DIR$/../03-develop-persist-start/LAB 4 - SPRING BOOT PERSISTENT.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../03-develop-persist-start/expense-service/src/main/java/com/bcp/training/model/Expense.java" beforeDir="false" afterPath="$PROJECT_DIR$/../03-develop-persist-start/expense-service/src/main/java/com/bcp/training/model/Expense.java" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="EmbeddingIndexingInfo">
+    <option name="cachedIndexableFilesCount" value="30" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
+  <component name="McpProjectServerCommands">
+    <commands />
+    <urls />
+  </component>
+  <component name="ProjectColorInfo"><![CDATA[{
+  "associatedIndex": 1
+}]]></component>
+  <component name="ProjectId" id="39SHaFz0huDQzG5PoYigBNRGszF" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.MCP Project settings loaded": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
+    "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
+    "git-widget-placeholder": "main",
+    "junie.onboarding.icon.badge.shown": "true",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "/Users/josediaz/Projects/JoeDayz/springboot4-samples/02-develop-rest-start",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "preferences.lookFeel",
+    "to.speed.mode.migration.done": "true",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="RunManager" selected="Spring Boot.ExpenseClientApplication">
+    <configuration name="ExpenseClientApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+      <option name="FRAME_DEACTIVATION_UPDATE_POLICY" value="UpdateClassesAndResources" />
+      <module name="expense-client" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="com.bcp.training.ExpenseClientApplication" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="ExpenseServiceApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+      <option name="FRAME_DEACTIVATION_UPDATE_POLICY" value="UpdateClassesAndResources" />
+      <module name="expense-service" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="com.bcp.training.ExpenseServiceApplication" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-jdk-30f59d01ecdd-2fc7cc6b9a17-intellij.indexing.shared.core-IU-253.30387.90" />
+        <option value="bundled-js-predefined-d6986cc7102b-9b0f141eb926-JavaScript-IU-253.30387.90" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="09da7759-4256-44a0-92c8-4941ae3f0b6c" name="Changes" comment="" />
+      <created>1770682613555</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1770682613555</updated>
+      <workItem from="1770682614706" duration="2372000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+</project>
