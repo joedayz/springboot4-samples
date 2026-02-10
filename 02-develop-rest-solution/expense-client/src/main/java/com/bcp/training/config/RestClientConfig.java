@@ -10,9 +10,8 @@ public class RestClientConfig {
 
     @Bean
     RestClient expenseServiceRestClient(
-        @Value("${expense.service.base-url}") String baseUrl,
-        RestClient.Builder builder
+            @Value("${expense.service.base-url}") String baseUrl
     ) {
-        return builder.baseUrl(baseUrl).build();
+        return RestClient.builder().baseUrl(baseUrl).build();
     }
 }

@@ -1,5 +1,6 @@
-package com.bcp.training.client;
+package com.bcp.training.service;
 
+import com.bcp.training.client.ExpenseServiceClient;
 import com.bcp.training.model.Expense;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Service;
@@ -19,17 +20,17 @@ public class ExpenseServiceClientImpl implements ExpenseServiceClient {
     @Override
     public Set<Expense> getAll() {
         return restClient.get()
-            .uri("/expenses")
-            .retrieve()
-            .body(new ParameterizedTypeReference<Set<Expense>>() {});
+                .uri("/expenses")
+                .retrieve()
+                .body(new ParameterizedTypeReference<>() {});
     }
 
     @Override
     public Expense create(Expense expense) {
         return restClient.post()
-            .uri("/expenses")
-            .body(expense)
-            .retrieve()
-            .body(Expense.class);
+                .uri("/expenses")
+                .body(expense)
+                .retrieve()
+                .body(Expense.class);
     }
 }

@@ -1,4 +1,4 @@
-package com.bcp.training.service;
+package com.bcp.training.web;
 
 import com.bcp.training.client.ExpenseServiceClient;
 import com.bcp.training.model.Expense;
