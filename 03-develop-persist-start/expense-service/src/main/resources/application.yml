@@ -1,0 +1,6 @@
+server:
+  port: 8080
+
+# TODO: Add Spring datasource configuration for H2
+# TODO: Enable H2 console
+# TODO: Configure JPA with hibernate ddl-auto and data initialization
