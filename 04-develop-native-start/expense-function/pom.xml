@@ -18,7 +18,7 @@
     <description>Native image demo - expense function (start)</description>
 
     <properties>
-        <java.version>21</java.version>
+        <java.version>25</java.version>
     </properties>
 
     <dependencies>
@@ -46,7 +46,7 @@
 
     <build>
         <plugins>
-            <!-- TODO: Add native-maven-plugin for GraalVM native image support -->
+            <!--TODO: Poner native plugin -->
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>

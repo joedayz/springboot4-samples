@@ -14,6 +14,86 @@ En este laboratorio aprenderás a:
 - Construir imágenes de contenedor con Dockerfile
 - Comparar tiempos de arranque entre JVM y nativo
 
+## Prerequisitos
+
+- **JDK 25** (GraalVM CE 25 recomendado): Spring Boot 4 requiere Java 25 como mínimo para compilación nativa
+- **Docker** o **Podman**: Para construir imágenes de contenedor
+- **Maven 3.9+**: Para compilar el proyecto
+
+### Instalación de GraalVM 25
+
+### Linux/Mac (SDKMAN!)
+
+```bash
+sdk install java 25-graalce
+sdk use java 25-graalce
+```
+
+### Descarga manual
+
+Descarga desde: https://www.graalvm.org/downloads/
+
+Configura `JAVA_HOME` y `PATH`:
+
+### Linux/Mac
+
+```bash
+export JAVA_HOME=/path/to/graalvm-jdk-25
+export PATH=$JAVA_HOME/bin:$PATH
+```
+
+### Windows (CMD)
+
+```cmd
+set JAVA_HOME=C:\path\to\graalvm-jdk-25
+set PATH=%JAVA_HOME%\bin;%PATH%
+```
+
+### Windows (PowerShell)
+
+```powershell
+$env:JAVA_HOME = "C:\path\to\graalvm-jdk-25"
+$env:PATH = "$env:JAVA_HOME\bin;$env:PATH"
+```
+
+Verifica la instalación:
+
+```bash
+java -version
+native-image --version
+```
+
+### Requisito adicional en Windows: Visual Studio 2022
+
+En Windows, GraalVM Native Image necesita el compilador C/C++ de Microsoft para enlazar el ejecutable nativo. Debes instalar **Visual Studio 2022 Build Tools** (versión 17.6.0 o superior).
+
+1. Descarga desde: https://visualstudio.microsoft.com/downloads/
+2. En el instalador, selecciona **"Desktop development with C++"** (Desarrollo de escritorio con C++)
+3. Asegúrate de que estén seleccionados:
+   - **MSVC v143 - VS 2022 C++ x64/x86 build tools**
+   - **Windows SDK** (cualquier versión reciente)
+
+**Importante:** Después de instalar, ejecuta los comandos de compilación nativa desde el **"x64 Native Tools Command Prompt for VS 2022"** (disponible en el menú Inicio), NO desde un CMD o PowerShell normal.
+
+### Windows: Abrir x64 Native Tools Command Prompt
+
+1. Abre el menú Inicio
+2. Busca: **"x64 Native Tools Command Prompt for VS 2022"**
+3. Ejecuta los comandos de compilación nativa desde esa terminal
+
+Alternativamente, puedes configurar el entorno manualmente en cualquier terminal:
+
+```cmd
+"C:\Program Files\Microsoft Visual Studio\2022\BuildTools\VC\Auxiliary\Build\vcvarsall.bat" x64
+```
+
+### Errores comunes
+
+- **`NativeImageRequirementsException: Native Image must support at least Java 25`**: Tu JDK/GraalVM es una versión anterior. Debes actualizar a GraalVM 25.
+- **`Failed to find 'vswhere.exe'`** (Windows): No tienes Visual Studio 2022 instalado. Instálalo con los Build Tools de C++ y usa el x64 Native Tools Command Prompt.
+- **`cl.exe not found`** (Windows): No estás usando el x64 Native Tools Command Prompt. Abre esa terminal o ejecuta `vcvarsall.bat x64`.
+- **`Builder lifecycle 'creator' failed with status code 51`** (Buildpacks): El builder de Paketo Buildpacks no soporta Java 25 aún. Usa el enfoque con **Dockerfile** (sección 7) en lugar de Buildpacks.
+
 ## 1. Cargar en su IDE el proyecto 04-develop-native-start
 
 Abre el proyecto en tu IDE preferido. El proyecto contiene:
@@ -144,7 +224,7 @@ Dentro de `<build><plugins>`, agrega el plugin de GraalVM:
 ### Prerequisitos
 
 Para compilar nativamente de forma local necesitas:
-- **GraalVM JDK 21** instalado y configurado como `JAVA_HOME`
+- **GraalVM JDK 25** instalado y configurado como `JAVA_HOME` (ver sección Prerequisitos al inicio)
 - El comando `native-image` disponible en el PATH
 
 Verifica tu instalación:
@@ -156,14 +236,16 @@ java -version
 native-image --version
 ```
 
-### Windows (CMD/PowerShell)
+### Windows (x64 Native Tools Command Prompt)
 
 ```cmd
 java -version
 native-image --version
 ```
 
-**Nota:** Si no tienes GraalVM instalado localmente, puedes saltar al paso 5 para compilar dentro de un contenedor.
+**Nota:** En Windows, usa el **"x64 Native Tools Command Prompt for VS 2022"** para compilar nativamente (ver sección Prerequisitos).
+
+**Nota:** Si no tienes GraalVM instalado localmente, puedes saltar al paso 5 para compilar dentro de un contenedor (solo requiere Docker).
 
 ### 4.1. Compila el ejecutable nativo
 
@@ -173,15 +255,11 @@ native-image --version
 mvn -Pnative native:compile -DskipTests
 ```
 
-### Windows (CMD)
+### Windows (x64 Native Tools Command Prompt)
+
+**Importante:** Abre el **"x64 Native Tools Command Prompt for VS 2022"** desde el menú Inicio antes de ejecutar:
 
 ```cmd
-mvn -Pnative native:compile -DskipTests
-```
-
-### Windows (PowerShell)
-
-```powershell
 mvn -Pnative native:compile -DskipTests
 ```
 
@@ -195,11 +273,13 @@ mvn -Pnative native:compile -DskipTests
 ./target/expense-function
 ```
 
-### Windows (CMD/PowerShell)
+### Windows
 
 ```cmd
 target\expense-function.exe
 ```
+
+**Nota:** El ejecutable nativo en Windows se puede ejecutar desde cualquier terminal (CMD, PowerShell o Native Tools). Solo la **compilación** requiere el x64 Native Tools Command Prompt.
 
 ### 4.3. Compara el tiempo de arranque
 
@@ -233,47 +313,79 @@ Invoke-WebRequest -Uri http://localhost:8080/expenses -Method GET | Select-Objec
 
 Detén la aplicación con `Ctrl+C`.
 
-## 5. Construir imagen de contenedor nativa (Buildpacks)
+## 5. Construir imágenes de contenedor con Dockerfile
 
-Spring Boot puede construir imágenes de contenedor nativas usando **Cloud Native Buildpacks** (Paketo). Este método **no requiere GraalVM instalado localmente**, solo Docker o Podman.
+Este es el método recomendado para Java 25, ya que los Buildpacks de Paketo pueden no tener soporte aún para esta versión.
 
-### 5.1. Construye la imagen nativa con Buildpacks
+El proyecto incluye dos Dockerfiles multi-stage en `src/main/docker/`:
+- `Dockerfile.jvm`: Compila y ejecuta con JVM (Eclipse Temurin 25)
+- `Dockerfile.native`: Compila con GraalVM 25 y ejecuta como binario nativo
 
-### Linux/Mac
-
-```bash
-mvn -Pnative spring-boot:build-image -DskipTests
-```
-
-### Windows (CMD)
-
-```cmd
-mvn -Pnative spring-boot:build-image -DskipTests
-```
-
-### Windows (PowerShell)
-
-```powershell
-mvn -Pnative spring-boot:build-image -DskipTests
-```
-
-**Nota:** La primera vez descargará las imágenes base de Paketo (~1 GB). La compilación nativa dentro del contenedor toma 5-15 minutos.
-
-### 5.2. Ejecuta el contenedor
+### 5.1. Imagen JVM con Dockerfile
 
 ### Linux/Mac
 
 ```bash
-docker run --rm -p 8080:8080 expense-function:1.0.0-SNAPSHOT
+docker build -f src/main/docker/Dockerfile.jvm -t expense-function:jvm .
 ```
 
 ### Windows (CMD/PowerShell)
 
 ```cmd
-docker run --rm -p 8080:8080 expense-function:1.0.0-SNAPSHOT
+docker build -f src/main/docker/Dockerfile.jvm -t expense-function:jvm .
 ```
 
-### 5.3. Verifica los endpoints
+### 5.2. Ejecuta el contenedor JVM
+
+### Linux/Mac
+
+```bash
+docker run --rm -p 8080:8080 expense-function:jvm
+```
+
+### Windows (CMD/PowerShell)
+
+```cmd
+docker run --rm -p 8080:8080 expense-function:jvm
+```
+
+Anota el tiempo de arranque: `Started ExpenseFunctionApplication in X.XXX seconds`
+
+Detén el contenedor con `Ctrl+C`.
+
+### 5.3. Imagen nativa con Dockerfile
+
+**Nota:** Este build toma varios minutos (5-15 min) porque compila la imagen nativa con GraalVM dentro del contenedor. **No necesitas GraalVM instalado localmente**, solo Docker.
+
+### Linux/Mac
+
+```bash
+docker build -f src/main/docker/Dockerfile.native -t expense-function:native .
+```
+
+### Windows (CMD/PowerShell)
+
+```cmd
+docker build -f src/main/docker/Dockerfile.native -t expense-function:native .
+```
+
+### 5.4. Ejecuta el contenedor nativo
+
+### Linux/Mac
+
+```bash
+docker run --rm -p 8080:8080 expense-function:native
+```
+
+### Windows (CMD/PowerShell)
+
+```cmd
+docker run --rm -p 8080:8080 expense-function:native
+```
+
+Anota el tiempo de arranque: `Started ExpenseFunctionApplication in 0.XXX seconds`
+
+### 5.5. Verifica los endpoints
 
 ### Linux/Mac
 
@@ -295,79 +407,7 @@ Invoke-WebRequest -Uri http://localhost:8080/expenses -Method GET | Select-Objec
 
 Detén el contenedor con `Ctrl+C`.
 
-## 6. Construir imagen JVM con Buildpacks (para comparar)
-
-### 6.1. Construye la imagen JVM
-
-### Linux/Mac
-
-```bash
-mvn spring-boot:build-image -DskipTests
-```
-
-### Windows (CMD)
-
-```cmd
-mvn spring-boot:build-image -DskipTests
-```
-
-### Windows (PowerShell)
-
-```powershell
-mvn spring-boot:build-image -DskipTests
-```
-
-### 6.2. Ejecuta y compara
-
-### Linux/Mac
-
-```bash
-docker run --rm -p 8080:8080 expense-function:1.0.0-SNAPSHOT
-```
-
-### Windows (CMD/PowerShell)
-
-```cmd
-docker run --rm -p 8080:8080 expense-function:1.0.0-SNAPSHOT
-```
-
-Anota el tiempo de arranque y compara con el contenedor nativo.
-
-## 7. Construir con Dockerfile (alternativa)
-
-Como alternativa a Buildpacks, puedes usar Dockerfiles multi-stage.
-
-### 7.1. Imagen JVM con Dockerfile
-
-### Linux/Mac
-
-```bash
-docker build -f src/main/docker/Dockerfile.jvm -t expense-function:jvm .
-```
-
-### Windows (CMD/PowerShell)
-
-```cmd
-docker build -f src/main/docker/Dockerfile.jvm -t expense-function:jvm .
-```
-
-### 7.2. Imagen nativa con Dockerfile
-
-### Linux/Mac
-
-```bash
-docker build -f src/main/docker/Dockerfile.native -t expense-function:native .
-```
-
-### Windows (CMD/PowerShell)
-
-```cmd
-docker build -f src/main/docker/Dockerfile.native -t expense-function:native .
-```
-
-**Nota:** La imagen nativa con Dockerfile es más grande que con Buildpacks, pero te da control total sobre el proceso de build.
-
-### 7.3. Comparar tamaños de imagen
+### 5.6. Comparar tamaños de imagen
 
 ### Linux/Mac
 
@@ -381,7 +421,47 @@ docker images expense-function
 docker images expense-function
 ```
 
-## 8. Comparar tamaños de imagen
+## 6. Construir con Buildpacks (alternativa)
+
+Spring Boot también puede construir imágenes usando **Cloud Native Buildpacks** (Paketo) con `spring-boot:build-image`. Sin embargo, los Buildpacks pueden no soportar Java 25 aún.
+
+**Si obtienes el error `Builder lifecycle 'creator' failed with status code 51`**, usa el método con Dockerfile (sección 5).
+
+### 6.1. Imagen JVM con Buildpacks
+
+### Linux/Mac
+
+```bash
+mvn spring-boot:build-image -DskipTests
+```
+
+### Windows (CMD/PowerShell)
+
+```cmd
+mvn spring-boot:build-image -DskipTests
+```
+
+### 6.2. Imagen nativa con Buildpacks
+
+### Linux/Mac
+
+```bash
+mvn -Pnative spring-boot:build-image -DskipTests
+```
+
+### Windows (CMD/PowerShell)
+
+```cmd
+mvn -Pnative spring-boot:build-image -DskipTests
+```
+
+### 6.3. Ejecuta y compara
+
+```bash
+docker run --rm -p 8080:8080 expense-function:1.0.0-SNAPSHOT
+```
+
+## 7. Comparar tamaños de imagen
 
 ```bash
 docker images expense-function
@@ -396,9 +476,9 @@ docker images expense-function
 
 La imagen nativa es significativamente más pequeña porque no incluye la JVM completa.
 
-## 9. Medir tiempos de arranque
+## 8. Medir tiempos de arranque
 
-### 9.1. Arranque JVM
+### 8.1. Arranque JVM
 
 ### Linux/Mac
 
@@ -414,7 +494,7 @@ docker run --rm -p 8080:8080 expense-function:jvm
 
 Anota: `Started ExpenseFunctionApplication in X.XXX seconds`
 
-### 9.2. Arranque nativo
+### 8.2. Arranque nativo
 
 ### Linux/Mac
 
@@ -430,7 +510,7 @@ docker run --rm -p 8080:8080 expense-function:native
 
 Anota: `Started ExpenseFunctionApplication in 0.XXX seconds`
 
-### 9.3. Tabla comparativa
+### 8.3. Tabla comparativa
 
 | Métrica | JVM | Nativo |
 |---|---|---|
@@ -440,7 +520,7 @@ Anota: `Started ExpenseFunctionApplication in 0.XXX seconds`
 | Tiempo de compilación | ~5-10 s | ~3-10 min |
 | Throughput (peak) | Mayor | Menor |
 
-## 10. Diferencias clave: Spring Boot vs Quarkus (Native)
+## 9. Diferencias clave: Spring Boot vs Quarkus (Native)
 
 | Concepto | Quarkus | Spring Boot 4 |
 |---|---|---|
@@ -456,9 +536,9 @@ Anota: `Started ExpenseFunctionApplication in 0.XXX seconds`
 | **Tamaño ejecutable** | ~30-50 MB | ~70-100 MB |
 | **Arranque nativo** | ~0.01-0.05 s | ~0.03-0.1 s |
 
-## 11. Consideraciones importantes
+## 10. Consideraciones importantes
 
-### 11.1. Limitaciones del modo nativo
+### 10.1. Limitaciones del modo nativo
 
 - **Sin reflexión dinámica**: Spring AOT genera las configuraciones necesarias, pero librerías de terceros pueden requerir hints adicionales
 - **Sin class loading dinámico**: Las clases deben ser conocidas en tiempo de compilación
@@ -466,14 +546,14 @@ Anota: `Started ExpenseFunctionApplication in 0.XXX seconds`
 - **Tiempo de compilación**: Mucho más lento que JVM (minutos vs segundos)
 - **Throughput**: El peak throughput puede ser menor que en JVM (sin JIT compiler)
 
-### 11.2. Cuándo usar nativo
+### 10.2. Cuándo usar nativo
 
 - **Serverless / FaaS**: Donde el cold start importa
 - **Microservicios**: Muchas instancias pequeñas
 - **Edge computing**: Recursos limitados
 - **CLI tools**: Herramientas de línea de comandos
 
-### 11.3. Cuándo NO usar nativo
+### 10.3. Cuándo NO usar nativo
 
 - **Aplicaciones monolíticas**: El throughput JVM es superior
 - **Batch processing**: Procesos de larga duración donde el JIT optimizer brilla
