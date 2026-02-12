@@ -1,0 +1,9 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: expense-function
+
+# TODO: No additional configuration needed for native image support.
+# The native profile is already defined in spring-boot-starter-parent.

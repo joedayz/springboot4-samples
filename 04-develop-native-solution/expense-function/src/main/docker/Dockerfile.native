@@ -1,0 +1,16 @@
+## Stage 1: Build native image
+FROM ghcr.io/graalvm/native-image-community:21 AS builder
+RUN microdnf install -y findutils
+WORKDIR /build
+COPY .mvn .mvn
+COPY mvnw pom.xml ./
+RUN chmod +x mvnw && ./mvnw dependency:resolve -B
+COPY src src
+RUN ./mvnw -Pnative native:compile -DskipTests -B
+
+## Stage 2: Run
+FROM debian:bookworm-slim
+WORKDIR /app
+COPY --from=builder /build/target/expense-function app
+EXPOSE 8080
+ENTRYPOINT ["./app"]
