@@ -512,14 +512,42 @@ public class ExpenseController {
 
 ### 9.1. Navega al directorio expense-service
 
+### Linux/Mac
+
 ```bash
+cd expense-service
+```
+
+### Windows (CMD)
+
+```cmd
+cd expense-service
+```
+
+### Windows (PowerShell)
+
+```powershell
 cd expense-service
 ```
 
 ### 9.2. Inicia la aplicación
 
+### Linux/Mac
+
 ```bash
 mvn spring-boot:run
+```
+
+### Windows (CMD)
+
+```cmd
+mvnw.cmd spring-boot:run
+```
+
+### Windows (PowerShell)
+
+```powershell
+.\mvnw.cmd spring-boot:run
 ```
 
 **Nota:** A diferencia de Quarkus Dev Services (que inicia un contenedor PostgreSQL automáticamente), Spring Boot usa H2 en memoria, por lo que no necesitas Docker.
@@ -540,24 +568,73 @@ Para la consola H2, usa:
 
 ### 10.1. Listar todos los gastos con paginación
 
+### Linux/Mac
+
 ```bash
 curl "http://localhost:8080/expenses?pageSize=5&pageNum=1"
+```
+
+### Windows (CMD)
+
+```cmd
+curl "http://localhost:8080/expenses?pageSize=5&pageNum=1"
+```
+
+### Windows (PowerShell)
+
+```powershell
+Invoke-WebRequest -Uri "http://localhost:8080/expenses?pageSize=5&pageNum=1" -Method GET | Select-Object -ExpandProperty Content
 ```
 
 **Resultado esperado:** Deberías ver un array JSON con los gastos inicializados desde `data.sql`, ordenados por `amount` y `associateId`.
 
 ### 10.2. Listar la segunda página
 
+### Linux/Mac
+
 ```bash
 curl "http://localhost:8080/expenses?pageSize=5&pageNum=2"
 ```
 
+### Windows (CMD)
+
+```cmd
+curl "http://localhost:8080/expenses?pageSize=5&pageNum=2"
+```
+
+### Windows (PowerShell)
+
+```powershell
+Invoke-WebRequest -Uri "http://localhost:8080/expenses?pageSize=5&pageNum=2" -Method GET | Select-Object -ExpandProperty Content
+```
+
 ### 10.3. Crear un nuevo gasto
+
+### Linux/Mac
 
 ```bash
 curl -X POST http://localhost:8080/expenses \
   -H "Content-Type: application/json" \
   -d '{"name":"New Book","paymentMethod":"CASH","amount":25.50,"associateId":1}'
+```
+
+### Windows (CMD)
+
+```cmd
+curl -X POST http://localhost:8080/expenses -H "Content-Type: application/json" -d "{\"name\":\"New Book\",\"paymentMethod\":\"CASH\",\"amount\":25.50,\"associateId\":1}"
+```
+
+### Windows (PowerShell)
+
+```powershell
+$body = @{
+    name = "New Book"
+    paymentMethod = "CASH"
+    amount = 25.50
+    associateId = 1
+} | ConvertTo-Json
+
+Invoke-WebRequest -Uri http://localhost:8080/expenses -Method POST -Body $body -ContentType "application/json" | Select-Object -ExpandProperty Content
 ```
 
 **Resultado esperado:** Deberías recibir el objeto JSON del gasto creado con un `id` y `uuid` generados.
@@ -566,16 +643,53 @@ curl -X POST http://localhost:8080/expenses \
 
 Primero, obtén el UUID de un gasto existente listando los gastos. Luego:
 
+### Linux/Mac
+
 ```bash
 curl -X PUT http://localhost:8080/expenses \
   -H "Content-Type: application/json" \
   -d '{"id":1,"uuid":"<UUID_DEL_GASTO>","name":"Updated Desk","paymentMethod":"CREDIT_CARD","amount":200.00,"associateId":1}'
 ```
 
+### Windows (CMD)
+
+```cmd
+curl -X PUT http://localhost:8080/expenses -H "Content-Type: application/json" -d "{\"id\":1,\"uuid\":\"<UUID_DEL_GASTO>\",\"name\":\"Updated Desk\",\"paymentMethod\":\"CREDIT_CARD\",\"amount\":200.00,\"associateId\":1}"
+```
+
+### Windows (PowerShell)
+
+```powershell
+$body = @{
+    id = 1
+    uuid = "<UUID_DEL_GASTO>"
+    name = "Updated Desk"
+    paymentMethod = "CREDIT_CARD"
+    amount = 200.00
+    associateId = 1
+} | ConvertTo-Json
+
+Invoke-WebRequest -Uri http://localhost:8080/expenses -Method PUT -Body $body -ContentType "application/json" | Select-Object -ExpandProperty Content
+```
+
 ### 10.5. Eliminar un gasto
+
+### Linux/Mac
 
 ```bash
 curl -X DELETE http://localhost:8080/expenses/<UUID_DEL_GASTO>
+```
+
+### Windows (CMD)
+
+```cmd
+curl -X DELETE http://localhost:8080/expenses/<UUID_DEL_GASTO>
+```
+
+### Windows (PowerShell)
+
+```powershell
+Invoke-WebRequest -Uri "http://localhost:8080/expenses/<UUID_DEL_GASTO>" -Method DELETE
 ```
 
 ## 11. Verificar la base de datos

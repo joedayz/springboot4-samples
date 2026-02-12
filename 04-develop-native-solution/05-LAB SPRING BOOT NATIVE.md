@@ -323,30 +323,36 @@ El proyecto incluye dos Dockerfiles multi-stage en `src/main/docker/`:
 
 ### 5.1. Imagen JVM con Dockerfile
 
-### Linux/Mac
+### Docker (Linux/Mac/Windows)
 
 ```bash
 docker build -f src/main/docker/Dockerfile.jvm -t expense-function:jvm .
 ```
 
-### Windows (CMD/PowerShell)
+### Podman (Linux/Mac)
 
-```cmd
-docker build -f src/main/docker/Dockerfile.jvm -t expense-function:jvm .
+```bash
+podman build -f src/main/docker/Dockerfile.jvm -t expense-function:jvm .
 ```
 
 ### 5.2. Ejecuta el contenedor JVM
 
-### Linux/Mac
+### Docker (Linux/Mac)
 
 ```bash
 docker run --rm -p 8080:8080 expense-function:jvm
 ```
 
-### Windows (CMD/PowerShell)
+### Docker (Windows CMD/PowerShell)
 
 ```cmd
 docker run --rm -p 8080:8080 expense-function:jvm
+```
+
+### Podman (Linux/Mac)
+
+```bash
+podman run --rm -p 8080:8080 expense-function:jvm
 ```
 
 Anota el tiempo de arranque: `Started ExpenseFunctionApplication in X.XXX seconds`
@@ -355,70 +361,82 @@ Detén el contenedor con `Ctrl+C`.
 
 ### 5.3. Imagen nativa con Dockerfile
 
-**Nota:** Este build toma varios minutos (5-15 min) porque compila la imagen nativa con GraalVM dentro del contenedor. **No necesitas GraalVM instalado localmente**, solo Docker.
+**Nota:** Este build toma varios minutos (5-15 min) porque compila la imagen nativa con GraalVM dentro del contenedor. **No necesitas GraalVM instalado localmente**, solo Docker o Podman.
 
-### Linux/Mac
+### Docker (Linux/Mac/Windows)
 
 ```bash
 docker build -f src/main/docker/Dockerfile.native -t expense-function:native .
 ```
 
-### Windows (CMD/PowerShell)
+### Podman (Linux/Mac)
 
-```cmd
-docker build -f src/main/docker/Dockerfile.native -t expense-function:native .
+```bash
+podman build -f src/main/docker/Dockerfile.native -t expense-function:native .
 ```
 
 ### 5.4. Ejecuta el contenedor nativo
 
-### Linux/Mac
+### Docker (Linux/Mac)
 
 ```bash
 docker run --rm -p 8080:8080 expense-function:native
 ```
 
-### Windows (CMD/PowerShell)
+### Docker (Windows CMD/PowerShell)
 
 ```cmd
 docker run --rm -p 8080:8080 expense-function:native
+```
+
+### Podman (Linux/Mac)
+
+```bash
+podman run --rm -p 8080:8080 expense-function:native
 ```
 
 Anota el tiempo de arranque: `Started ExpenseFunctionApplication in 0.XXX seconds`
 
 ### 5.5. Verifica los endpoints
 
-### Linux/Mac
+### Docker (Linux/Mac)
 
 ```bash
 curl http://localhost:8080/expenses
 ```
 
-### Windows (CMD)
+### Docker (Windows CMD)
 
 ```cmd
 curl http://localhost:8080/expenses
 ```
 
-### Windows (PowerShell)
+### Docker (Windows PowerShell)
 
 ```powershell
 Invoke-WebRequest -Uri http://localhost:8080/expenses -Method GET | Select-Object -ExpandProperty Content
+```
+
+### Podman (Linux/Mac)
+
+```bash
+curl http://localhost:8080/expenses
 ```
 
 Detén el contenedor con `Ctrl+C`.
 
 ### 5.6. Comparar tamaños de imagen
 
-### Linux/Mac
+### Docker (Linux/Mac/Windows)
 
 ```bash
 docker images expense-function
 ```
 
-### Windows (CMD/PowerShell)
+### Podman (Linux/Mac)
 
-```cmd
-docker images expense-function
+```bash
+podman images expense-function
 ```
 
 ## 6. Construir con Buildpacks (alternativa)
@@ -427,44 +445,72 @@ Spring Boot también puede construir imágenes usando **Cloud Native Buildpacks*
 
 **Si obtienes el error `Builder lifecycle 'creator' failed with status code 51`**, usa el método con Dockerfile (sección 5).
 
+**Nota sobre Podman:** Para usar Buildpacks con Podman, necesitas configurar la variable de entorno `DOCKER_HOST` o usar la propiedad Maven `spring-boot.build-image.docker-host`.
+
 ### 6.1. Imagen JVM con Buildpacks
 
-### Linux/Mac
+### Docker (Linux/Mac/Windows)
 
 ```bash
 mvn spring-boot:build-image -DskipTests
 ```
 
-### Windows (CMD/PowerShell)
+### Podman (Linux/Mac) - Requiere configuración
 
-```cmd
+```bash
+# Opción 1: Configurar DOCKER_HOST (si usas socket de Podman)
+export DOCKER_HOST=unix://$XDG_RUNTIME_DIR/podman/podman.sock
 mvn spring-boot:build-image -DskipTests
+
+# Opción 2: Usar propiedad Maven
+mvn spring-boot:build-image -DskipTests -Dspring-boot.build-image.docker-host=/run/podman/podman.sock
 ```
 
 ### 6.2. Imagen nativa con Buildpacks
 
-### Linux/Mac
+### Docker (Linux/Mac/Windows)
 
 ```bash
 mvn -Pnative spring-boot:build-image -DskipTests
 ```
 
-### Windows (CMD/PowerShell)
+### Podman (Linux/Mac) - Requiere configuración
 
-```cmd
+```bash
+# Opción 1: Configurar DOCKER_HOST
+export DOCKER_HOST=unix://$XDG_RUNTIME_DIR/podman/podman.sock
 mvn -Pnative spring-boot:build-image -DskipTests
+
+# Opción 2: Usar propiedad Maven
+mvn -Pnative spring-boot:build-image -DskipTests -Dspring-boot.build-image.docker-host=/run/podman/podman.sock
 ```
 
 ### 6.3. Ejecuta y compara
+
+### Docker
 
 ```bash
 docker run --rm -p 8080:8080 expense-function:1.0.0-SNAPSHOT
 ```
 
+### Podman
+
+```bash
+podman run --rm -p 8080:8080 expense-function:1.0.0-SNAPSHOT
+```
+
 ## 7. Comparar tamaños de imagen
+
+### Docker
 
 ```bash
 docker images expense-function
+```
+
+### Podman
+
+```bash
+podman images expense-function
 ```
 
 **Resultado esperado:**
@@ -480,32 +526,44 @@ La imagen nativa es significativamente más pequeña porque no incluye la JVM co
 
 ### 8.1. Arranque JVM
 
-### Linux/Mac
+### Docker (Linux/Mac)
 
 ```bash
 docker run --rm -p 8080:8080 expense-function:jvm
 ```
 
-### Windows (CMD/PowerShell)
+### Docker (Windows CMD/PowerShell)
 
 ```cmd
 docker run --rm -p 8080:8080 expense-function:jvm
+```
+
+### Podman (Linux/Mac)
+
+```bash
+podman run --rm -p 8080:8080 expense-function:jvm
 ```
 
 Anota: `Started ExpenseFunctionApplication in X.XXX seconds`
 
 ### 8.2. Arranque nativo
 
-### Linux/Mac
+### Docker (Linux/Mac)
 
 ```bash
 docker run --rm -p 8080:8080 expense-function:native
 ```
 
-### Windows (CMD/PowerShell)
+### Docker (Windows CMD/PowerShell)
 
 ```cmd
 docker run --rm -p 8080:8080 expense-function:native
+```
+
+### Podman (Linux/Mac)
+
+```bash
+podman run --rm -p 8080:8080 expense-function:native
 ```
 
 Anota: `Started ExpenseFunctionApplication in 0.XXX seconds`
