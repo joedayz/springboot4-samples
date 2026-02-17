@@ -75,7 +75,6 @@ Agrega las siguientes dependencias dentro de la sección `<dependencies>` (donde
 <dependency>
     <groupId>com.h2database</groupId>
     <artifactId>h2</artifactId>
-    <scope>runtime</scope>
 </dependency>
 <dependency>
     <groupId>org.springdoc</groupId>
@@ -124,6 +123,42 @@ spring:
 - `h2.console.enabled: true` - Consola web H2 disponible en `/h2-console`
 - `ddl-auto: create-drop` - Hibernate crea y elimina las tablas automáticamente
 - **Ventaja sobre Quarkus**: No necesitas instalar PostgreSQL ni Docker para desarrollo
+
+## 4.3. Crear la configuración de la Consola H2
+
+En Spring Boot 4, el `DispatcherServlet` intercepta la ruta `/h2-console` antes de que llegue al servlet de H2, causando un error 404. Para solucionarlo, necesitas registrar manualmente el servlet.
+
+Crea un nuevo archivo en: `develop-review/src/main/java/com/bcp/training/H2ConsoleConfig.java`
+
+```java
+package com.bcp.training;
+
+import org.h2.server.web.JakartaWebServlet;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.web.servlet.ServletRegistrationBean;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+@Configuration
+@ConditionalOnProperty(name = "spring.h2.console.enabled", havingValue = "true")
+public class H2ConsoleConfig {
+
+    @Bean
+    ServletRegistrationBean<JakartaWebServlet> h2Console() {
+        var registration = new ServletRegistrationBean<>(new JakartaWebServlet());
+        registration.addUrlMappings("/h2-console/*");
+        registration.setLoadOnStartup(1);
+        return registration;
+    }
+}
+```
+
+**NOTA:**
+- Esta clase es necesaria en Spring Boot 4 porque el `DispatcherServlet` tiene prioridad sobre otros servlets
+- `JakartaWebServlet` es la clase del servlet H2 compatible con Jakarta EE
+- Por esto la dependencia H2 se declara **sin** `<scope>runtime</scope>` (necesitamos compilar contra ella)
+- `@ConditionalOnProperty` asegura que solo se activa cuando `spring.h2.console.enabled=true`
+- La consola estará disponible en: http://localhost:8080/h2-console/ (JDBC URL: `jdbc:h2:mem:reviewdb`)
 
 ## 5. Crear la entidad Talk
 
@@ -309,7 +344,6 @@ package com.bcp.training.speaker;
 
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -318,9 +352,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
@@ -359,12 +391,12 @@ public class SpeakerController {
     }
 
     @DeleteMapping("/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteSpeaker(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteSpeaker(@PathVariable Long id) {
         if (!speakerRepository.existsById(id)) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+            return ResponseEntity.notFound().build();
         }
         speakerRepository.deleteById(id);
+        return ResponseEntity.noContent().build();
     }
 
     private String filterSortBy(String sortBy) {
@@ -623,7 +655,30 @@ En este laboratorio has aprendido a:
 - Implementar operaciones CRUD con Spring Data JPA
 - Crear relaciones `@OneToMany` entre entidades JPA
 - Usar `ResponseEntity` para respuestas HTTP personalizadas
-- Manejar errores con `ResponseStatusException`
+- Manejar respuestas HTTP con `ResponseEntity`
+
+## Troubleshooting
+
+### Error: "Table SPEAKER not found"
+
+**Solución:**
+- Verifica que `Speaker.java` tenga `@Entity` y que el `id` sea de tipo `Long` (no `String`)
+- `@GeneratedValue(strategy = GenerationType.IDENTITY)` requiere un campo numérico
+- Verifica que `ddl-auto: create-drop` esté configurado en `application.yml`
+
+### Error: "No static resource h2-console" (404 al acceder a /h2-console)
+
+**Solución:**
+- Este es un problema de Spring Boot 4: el `DispatcherServlet` intercepta la ruta `/h2-console` antes de que llegue al servlet de H2
+- Crea la clase `H2ConsoleConfig.java` (ver paso 4.3) que registra manualmente el servlet de H2
+- Asegúrate de que la dependencia H2 esté **sin** `<scope>runtime</scope>` en el `pom.xml`
+- Accede usando: http://localhost:8080/h2-console/ (con la barra al final)
+
+### Error: "No qualifying bean of type 'SpeakerRepository'"
+
+**Solución:**
+- Verifica que `SpeakerRepository` extienda `JpaRepository<Speaker, Long>`
+- Verifica que esté en un paquete escaneado por `@SpringBootApplication`
 
 ## Próximos pasos
 
