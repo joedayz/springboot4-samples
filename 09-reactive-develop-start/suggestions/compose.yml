@@ -1,0 +1,11 @@
+# Equivalente a quarkus.datasource.devservices.image-name=postgres:14.1
+# Levantar manualmente: docker compose up -d  o  podman compose up -d
+services:
+  postgres:
+    image: postgres:14.1
+    environment:
+      POSTGRES_DB: suggestions
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"

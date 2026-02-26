@@ -107,6 +107,24 @@ podman compose up -d
 
 ---
 
+## Spring Boot Docker Compose con Podman
+
+Spring Boot Docker Compose (09-reactive-develop, etc.) invoca `docker` directamente. Con Podman:
+
+**Opción A — Symlink (macOS/Linux):**
+```bash
+sudo ln -sf $(which podman) /usr/local/bin/docker
+# Verificar: podman compose version
+```
+
+**Opción B — Manual:** Levantar los contenedores y saltar Docker Compose:
+```bash
+podman compose up -d
+mvn spring-boot:run -Dspring.docker.compose.skip=true
+```
+
+---
+
 ## Testcontainers con Podman
 
 Testcontainers necesita `DOCKER_HOST` cuando usas Podman.
@@ -160,8 +178,8 @@ REM Si falla: set DOCKER_HOST=npipe:////./pipe/podman
 | Plataforma | Runtime | Nota |
 |------------|---------|------|
 | macOS | Docker | Sin configuración extra |
-| macOS | Podman | `export DOCKER_HOST=unix://$HOME/.local/share/containers/podman/machine/qemu/podman.sock` para Testcontainers |
+| macOS | Podman | Symlink `docker→podman` o manual. Para tests: `export DOCKER_HOST=unix://$HOME/.local/share/containers/podman/machine/qemu/podman.sock` |
 | Windows | Docker | Sin configuración extra |
-| Windows | Podman | `$env:DOCKER_HOST="npipe:////./pipe/docker_engine"` para Testcontainers |
+| Windows | Podman | Symlink o manual. Para tests: `$env:DOCKER_HOST="npipe:////./pipe/docker_engine"` |
 | Linux | Docker | `sudo systemctl start docker` |
-| Linux | Podman | `export DOCKER_HOST=unix:///run/user/$(id -u)/podman/podman.sock` para Testcontainers |
+| Linux | Podman | Symlink `docker→podman` o manual. Para tests: `export DOCKER_HOST=unix:///run/user/$(id -u)/podman/podman.sock` |

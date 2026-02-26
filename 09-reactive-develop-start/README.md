@@ -17,23 +17,30 @@ Implementar endpoints REST reactivos para el recurso `Suggestion` usando Spring 
 2. Implementar `GET /suggestion/{id}` - obtener por ID
 3. Implementar `GET /suggestion` - listar todas
 
+## Guía completa
+
+Ver **[LAB 9 - SPRING BOOT REACTIVE DEVELOP.md](LAB%209%20-%20SPRING%20BOOT%20REACTIVE%20DEVELOP.md)** para la guía paso a paso (estructura similar a la guía Quarkus LAB-11-GUIA.md).
+
 ## Requisitos
 
 - Java 21
 - Maven 3.9+
-- Docker o Podman (para tests con Testcontainers)
+- Docker o Podman (para PostgreSQL en desarrollo y tests)
 
 ## Ejecutar
 
-**macOS / Linux:**
+Requiere PostgreSQL en `localhost:5432` con base de datos `suggestions`.
+
+**Levantar PostgreSQL:**
 ```bash
 cd suggestions
-mvn spring-boot:run
+docker compose up -d
+# o con Podman:
+podman compose up -d
 ```
 
-**Windows PowerShell / CMD:**
-```powershell
-cd suggestions
+**Ejecutar la aplicación:**
+```bash
 mvn spring-boot:run
 ```
 
@@ -41,7 +48,7 @@ mvn spring-boot:run
 
 Requiere Docker o Podman para Testcontainers (PostgreSQL).
 
-**Con Docker (macOS, Linux, Windows):**
+**Con Docker:**
 ```bash
 cd suggestions
 mvn test
