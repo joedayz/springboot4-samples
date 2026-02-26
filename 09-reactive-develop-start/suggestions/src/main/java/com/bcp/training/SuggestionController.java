@@ -1,10 +1,9 @@
 package com.bcp.training;
 
+import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import reactor.core.scheduler.Schedulers;
 
 @RestController
 @RequestMapping("/suggestion")
@@ -14,6 +13,26 @@ public class SuggestionController {
 
     public SuggestionController(SuggestionRepository repository) {
         this.repository = repository;
+    }
+
+    @PostMapping
+    public Mono<Suggestion> create(@RequestBody Suggestion newSuggestion) {
+        return repository.save(newSuggestion);
+    }
+
+    @GetMapping("/{id}")
+    public Mono<Suggestion> get(@PathVariable Long id) {
+        return repository.findById(id);
+    }
+
+    @GetMapping
+    public Flux<Suggestion> list() {
+
+ 
+
+
+
+        return repository.findAll();
     }
 
     @DeleteMapping
