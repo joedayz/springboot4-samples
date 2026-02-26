@@ -13,6 +13,7 @@ modulos para construir los mismos temas con Spring Boot 4.
 1. Lee `curso/temario.md` para la vision general.
 2. Revisa `curso/diferencias-quarkus-vs-springboot4.md` para la comparativa honesta.
 3. Cada modulo ira incorporando proyectos `*-start` y `*-solution` con ejercicios y soluciones.
+4. Para proyectos que usan contenedores (Docker/Podman): ver [CONTAINERS.md](CONTAINERS.md) para comandos por plataforma (Windows, macOS, Linux).
 
 Si quieres que agregue el codigo de los modulos, indicalo y lo priorizo por bloque (por ejemplo,
 REST, Persistencia, Seguridad).
