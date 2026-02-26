@@ -24,6 +24,7 @@ public class ProductsController {
 
     /**
      * Versión correcta: no bloquea el event loop.
+     * Usa Schedulers.boundedElastic() para ejecutar en un worker thread.
      */
     @GetMapping("/blocking")
     public Mono<String> blocking() {
@@ -38,7 +39,9 @@ public class ProductsController {
     }
 
     /**
-     * Demo del bloqueo: Thread.sleep directo bloquea el event loop.
+     * Versión que SÍ bloquea el event loop (solo para demostración).
+     * IMPORTANTE: Ejecutar blocking-bad PRIMERO, esperar 2 seg, LUEGO ./benchmark.sh
+     * El benchmark tardará ~32 seg (30 bloqueo + 2 priceHistory) con 1 worker thread.
      */
     @GetMapping("/blocking-bad")
     public Mono<String> blockingBad() {

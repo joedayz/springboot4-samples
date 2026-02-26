@@ -1,9 +1,10 @@
 server:
   port: 8080
 
+# Event loop threads (Spring Boot no tiene server.netty.worker-count)
 app:
   netty:
-    worker-count: 1
+    worker-count: 1  # 1 = demo bloqueo con /blocking-bad; aumentar para producción
 
 prices:
   service:

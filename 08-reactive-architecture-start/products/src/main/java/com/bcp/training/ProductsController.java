@@ -17,7 +17,7 @@ public class ProductsController {
         this.pricesService = pricesService;
     }
 
-    @GetMapping("/{productId}/priceHistory")
+    @GetMapping("/{productId}/priceHistory") // 2 segundos
     public Mono<ProductPriceHistory> getProductPriceHistory(@PathVariable Long productId) {
         return pricesService.getProductPriceHistory(productId);
     }

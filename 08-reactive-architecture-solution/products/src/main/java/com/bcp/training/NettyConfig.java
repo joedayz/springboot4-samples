@@ -12,6 +12,9 @@ import reactor.netty.resources.LoopResources;
 
 /**
  * Configura el número de event loop threads de Netty.
+ * Con 1 thread se puede demostrar el bloqueo con /blocking-bad.
+ *
+ * Propiedad: app.netty.worker-count (por defecto: 1 para este lab)
  * Usa ReactorResourceFactory para que Spring Boot use nuestros LoopResources.
  */
 @Configuration

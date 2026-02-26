@@ -19,4 +19,13 @@ public class PricesService {
                 .retrieve()
                 .bodyToMono(ProductPriceHistory.class);
     }
+
+    //BLOQUEANTE:
+//    public ProductPriceHistory getProductPriceHistory(Long productId) {
+//        return webClient.get()
+//                .uri("/history/{productId}", productId)
+//                .retrieve()
+//                .bodyToMono(ProductPriceHistory.class)
+//                .block();  // BLOQUEANTE
+//    }
 }
