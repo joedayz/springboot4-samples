@@ -1,6 +1,15 @@
 server:
   port: 8080
 
+app:
+  netty:
+    worker-count: 1
+
+prices:
+  service:
+    url: http://localhost:5500
+
 logging:
   level:
     org.springframework.web: INFO
+    com.bcp.training: INFO

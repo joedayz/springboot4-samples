@@ -9,10 +9,8 @@ public class PricesService {
 
     private final WebClient webClient;
 
-    public PricesService(WebClient.Builder webClientBuilder) {
-        this.webClient = webClientBuilder
-                .baseUrl("http://localhost:5500")
-                .build();
+    public PricesService(WebClient pricesWebClient) {
+        this.webClient = pricesWebClient;
     }
 
     public Mono<ProductPriceHistory> getProductPriceHistory(Long productId) {

@@ -1,7 +1,0 @@
-services:
-  prices:
-    build:
-      context: ./prices
-      dockerfile: Containerfile
-    ports:
-      - "5500:5000"

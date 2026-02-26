@@ -61,6 +61,11 @@ cd products
 mvn spring-boot:run
 ```
 
+Si ves `LinkError: failed to load the required native library`, usa:
+```bash
+mvn spring-boot:run -Dspring-boot.run.jvmArguments="-Dreactor.netty.native=false"
+```
+
 **Windows PowerShell:**
 ```powershell
 cd products
