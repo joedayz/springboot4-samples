@@ -1,0 +1,5 @@
+CREATE TABLE IF NOT EXISTS bank_account (
+    id BIGSERIAL PRIMARY KEY,
+    balance BIGINT NOT NULL,
+    type VARCHAR(50)
+);
