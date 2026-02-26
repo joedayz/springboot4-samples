@@ -27,21 +27,18 @@ public Mono<ProductPriceHistory> getProductPriceHistory(@PathVariable Long produ
 
 ## Ejecutar
 
-**Docker o Podman (macOS / Linux):**
+**Levantar prices (docker-compose):**
 ```bash
-docker run -d --name prices -p 5500:5000 docker.io/joedayz/do378-reactive-architecture-prices:latest
-# o: podman run -d --name prices -p 5500:5000 docker.io/joedayz/do378-reactive-architecture-prices:latest
-cd products
-mvn spring-boot:run
-time ./benchmark.sh
+docker compose up -d
+# o: podman compose up -d
 ```
 
-**Windows:**
-```powershell
-docker run -d --name prices -p 5500:5000 docker.io/joedayz/do378-reactive-architecture-prices:latest
+**Ejecutar products:**
+```bash
 cd products
 mvn spring-boot:run
-.\benchmark.ps1
 ```
 
-Ver [CONTAINERS.md](../CONTAINERS.md) para más comandos.
+**Benchmark:** `./benchmark.sh` (macOS/Linux) o `.\benchmark.ps1` (Windows)
+
+El servicio `prices` está en `prices/` (Python Flask). Ver [CONTAINERS.md](../CONTAINERS.md) para más comandos.

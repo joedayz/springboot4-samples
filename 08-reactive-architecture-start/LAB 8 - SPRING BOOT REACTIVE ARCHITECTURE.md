@@ -67,24 +67,21 @@ Con la versión reactiva, 10 requests paralelos completan en ~2 segundos (todos 
 
 ## Ejecutar (Docker o Podman)
 
-**macOS / Linux:**
+**Levantar prices (desde el directorio del proyecto):**
 ```bash
-docker run -d --name prices -p 5500:5000 docker.io/joedayz/do378-reactive-architecture-prices:latest
-# o: podman run -d --name prices -p 5500:5000 docker.io/joedayz/do378-reactive-architecture-prices:latest
-cd products && mvn spring-boot:run
-time ./benchmark.sh
+docker compose up -d
+# o: podman compose up -d
 ```
 
-**Windows PowerShell:**
-```powershell
-docker run -d --name prices -p 5500:5000 docker.io/joedayz/do378-reactive-architecture-prices:latest
-# o: podman run -d --name prices -p 5500:5000 docker.io/joedayz/do378-reactive-architecture-prices:latest
+**Ejecutar products y benchmark:**
+```bash
 cd products
 mvn spring-boot:run
-.\benchmark.ps1
+# En otra terminal (macOS/Linux): time ./benchmark.sh
+# Windows PowerShell: .\benchmark.ps1
 ```
 
-Ver [CONTAINERS.md](../CONTAINERS.md) para más comandos por plataforma.
+El servicio `prices` está en `prices/` (Python Flask). Ver [CONTAINERS.md](../CONTAINERS.md) para más comandos.
 
 ## Solución completa
 

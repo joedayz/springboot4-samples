@@ -11,29 +11,46 @@ Demostrar el problema de bloqueo cuando un endpoint REST llama a un servicio ext
 - Java 21
 - Docker o Podman (para el servicio prices)
 
+## Estructura
+
+```
+08-reactive-architecture-start/
+├── products/     # Servicio Spring Boot (Java)
+└── prices/       # Servicio externo (Python Flask, simula proceso lento ~2 seg)
+```
+
 ## Ejecutar
 
 ### 1. Levantar el servicio prices (simula proceso lento ~2 seg)
 
-**macOS / Linux (Docker o Podman):**
+**Opción A: docker-compose (recomendado, usa el proyecto local):**
+
+**macOS / Linux:**
 ```bash
-docker run -d --name prices -p 5500:5000 --restart=always docker.io/joedayz/do378-reactive-architecture-prices:latest
+docker compose up -d
 # o
-podman run -d --name prices -p 5500:5000 --restart=always docker.io/joedayz/do378-reactive-architecture-prices:latest
+podman compose up -d
 ```
 
-**Windows PowerShell:**
+**Windows PowerShell / CMD:**
 ```powershell
-docker run -d --name prices -p 5500:5000 --restart=always docker.io/joedayz/do378-reactive-architecture-prices:latest
+docker compose up -d
 # o
-podman run -d --name prices -p 5500:5000 --restart=always docker.io/joedayz/do378-reactive-architecture-prices:latest
+podman compose up -d
 ```
 
-**Windows CMD:**
-```cmd
-docker run -d --name prices -p 5500:5000 --restart=always docker.io/joedayz/do378-reactive-architecture-prices:latest
-REM o
-podman run -d --name prices -p 5500:5000 --restart=always docker.io/joedayz/do378-reactive-architecture-prices:latest
+**Opción B: imagen preconstruida:**
+```bash
+docker run -d --name prices -p 5500:5000 docker.io/joedayz/do378-reactive-architecture-prices:latest
+# o
+podman run -d --name prices -p 5500:5000 docker.io/joedayz/do378-reactive-architecture-prices:latest
+```
+
+**Opción C: construir desde `prices/`:**
+```bash
+cd prices
+docker build -f Containerfile -t prices:latest .
+docker run -d --name prices -p 5500:5000 prices:latest
 ```
 
 ### 2. Ejecutar products
