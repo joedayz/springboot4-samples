@@ -46,6 +46,7 @@ public class BankAccountsController {
     }
 
     public void sendBankAccountEvent(Long id, Long balance) {
-        kafkaTemplate.send(TOPIC, new BankAccountWasCreated(id, balance));
+        kafkaTemplate.send(TOPIC,
+                new BankAccountWasCreated(id, balance));
     }
 }

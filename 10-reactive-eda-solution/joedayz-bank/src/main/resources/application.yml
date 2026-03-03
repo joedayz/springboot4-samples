@@ -12,4 +12,9 @@ spring:
     bootstrap-servers: localhost:9092
     consumer:
       group-id: joedayz-bank
+      account-type-group-id: joedayz-bank-account-type-v2
       auto-offset-reset: earliest
+
+#logging:
+#  level:
+#    org.springframework.kafka: DEBUG

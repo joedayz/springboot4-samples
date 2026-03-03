@@ -18,29 +18,6 @@ public class FraudProcessor {
     private static final String LOW_RISK_TOPIC = "low-risk-account-was-detected";
     private static final String HIGH_RISK_TOPIC = "high-risk-account-was-detected";
 
-    private final KafkaTemplate<String, Object> kafkaTemplate;
-
-    public FraudProcessor(KafkaTemplate<String, Object> kafkaTemplate) {
-        this.kafkaTemplate = kafkaTemplate;
-    }
-
-    @KafkaListener(topics = "bank-account-was-created", groupId = "fraud-detector", containerFactory = "kafkaListenerContainerFactory")
-    public void sendEventNotifications(BankAccountWasCreated event) {
-        logBankAccountWasCreatedEvent(event);
-
-        Integer fraudScore = calculateFraudScore(event.balance);
-
-        logFraudScore(event.id, fraudScore);
-
-        if (fraudScore > 50) {
-            logEmitEvent("HighRiskAccountWasDetected", event.id);
-            kafkaTemplate.send(HIGH_RISK_TOPIC, new HighRiskAccountWasDetected(event.id));
-        } else if (fraudScore > 20) {
-            logEmitEvent("LowRiskAccountWasDetected", event.id);
-            kafkaTemplate.send(LOW_RISK_TOPIC, new LowRiskAccountWasDetected(event.id));
-        }
-    }
-
 
     private Integer calculateFraudScore(Long amount) {
         if (amount > 25000) {
