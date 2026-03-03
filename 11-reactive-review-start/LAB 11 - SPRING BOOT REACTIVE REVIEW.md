@@ -23,14 +23,12 @@ En este laboratorio aprenderás a:
 
 **macOS / Linux:**
 ```bash
-cd ../11-reactive-review-solution
 docker compose up -d
 # o: podman compose up -d
 ```
 
 **Windows:**
 ```powershell
-cd ..\11-reactive-review-solution
 docker compose up -d
 # o: podman compose up -d
 ```
