@@ -79,14 +79,14 @@ jwt.private-key-location=file:${user.home}/DO378/secure-jwt/privateKey.pem
 
 ```cmd
 cd expenses
-mvnw.cmd spring-boot:run
+mvn spring-boot:run
 ```
 
 #### Mac/Linux:
 
 ```bash
 cd expenses
-./mvnw spring-boot:run
+./mvn spring-boot:run
 ```
 
 La aplicación queda en: **http://localhost:8080**
@@ -103,7 +103,7 @@ java -jar target/expenses-service-1.0.0-SNAPSHOT.jar
 #### Mac/Linux:
 
 ```bash
-./mvnw clean package -DskipTests
+./mvn clean package -DskipTests
 java -jar target/expenses-service-1.0.0-SNAPSHOT.jar
 ```
 
@@ -115,7 +115,7 @@ java -jar target/expenses-service-1.0.0-SNAPSHOT.jar
 
 ```bash
 cd expenses
-./mvnw clean package -DskipTests
+./mvn clean package -DskipTests
 docker build -t spring/expenses-jwt:latest .
 docker run -i --rm -p 8080:8080 spring/expenses-jwt:latest
 ```
@@ -124,7 +124,7 @@ docker run -i --rm -p 8080:8080 spring/expenses-jwt:latest
 
 ```powershell
 cd expenses
-.\mvnw.cmd clean package -DskipTests
+.\mvn clean package -DskipTests
 docker build -t spring/expenses-jwt:latest .
 docker run -i --rm -p 8080:8080 spring/expenses-jwt:latest
 ```
@@ -133,7 +133,7 @@ docker run -i --rm -p 8080:8080 spring/expenses-jwt:latest
 
 ```bash
 cd expenses
-./mvnw clean package -DskipTests
+./mvn clean package -DskipTests
 podman build -t spring/expenses-jwt:latest .
 podman run -i --rm -p 8080:8080 spring/expenses-jwt:latest
 ```
@@ -142,7 +142,7 @@ podman run -i --rm -p 8080:8080 spring/expenses-jwt:latest
 
 ```powershell
 cd expenses
-.\mvnw.cmd clean package -DskipTests
+.\mvn.cmd clean package -DskipTests
 podman build -t spring/expenses-jwt:latest .
 podman run -i --rm -p 8080:8080 spring/expenses-jwt:latest
 ```
@@ -156,13 +156,13 @@ podman run -i --rm -p 8080:8080 spring/expenses-jwt:latest
 #### Windows:
 
 ```cmd
-mvnw.cmd test
+mvn test
 ```
 
 #### Mac/Linux:
 
 ```bash
-./mvnw test
+./mvn test
 ```
 
 ### Un test concreto
@@ -170,17 +170,17 @@ mvnw.cmd test
 #### Windows:
 
 ```cmd
-mvnw.cmd test -Dtest=JwtGeneratorTest
-mvnw.cmd test -Dtest=UserResourceTest
-mvnw.cmd test -Dtest=AdminResourceTest
+mvn test -Dtest=JwtGeneratorTest
+mvn test -Dtest=UserResourceTest
+mvn test -Dtest=AdminResourceTest
 ```
 
 #### Mac/Linux:
 
 ```bash
-./mvnw test -Dtest=JwtGeneratorTest
-./mvnw test -Dtest=UserResourceTest
-./mvnw test -Dtest=AdminResourceTest
+./mvn test -Dtest=JwtGeneratorTest
+./mvn test -Dtest=UserResourceTest
+./mvn test -Dtest=AdminResourceTest
 ```
 
 ## Endpoints
