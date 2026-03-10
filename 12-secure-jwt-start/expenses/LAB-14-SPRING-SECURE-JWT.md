@@ -27,21 +27,21 @@ Es necesario generar las claves RSA para firmar y verificar los JWTs antes de ej
 
 ```cmd
 cd expenses
-mvnw.cmd exec:java -Dexec.mainClass="com.bcp.training.jwt.GenerateKeys"
+mvn exec:java -Dexec.mainClass="com.bcp.training.jwt.GenerateKeys"
 ```
 
 #### Windows (PowerShell):
 
 ```powershell
 cd expenses
-.\mvnw.cmd exec:java "-Dexec.mainClass=com.bcp.training.jwt.GenerateKeys"
+.\mvn exec:java "-Dexec.mainClass=com.bcp.training.jwt.GenerateKeys"
 ```
 
 #### Mac/Linux:
 
 ```bash
 cd expenses
-./mvnw exec:java -Dexec.mainClass="com.bcp.training.jwt.GenerateKeys"
+./mvn exec:java -Dexec.mainClass="com.bcp.training.jwt.GenerateKeys"
 ```
 
 Se generan los archivos `privateKey.pem` y `publicKey.pem` en:
