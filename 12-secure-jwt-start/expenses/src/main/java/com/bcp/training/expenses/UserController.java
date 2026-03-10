@@ -21,6 +21,7 @@ public class UserController {
     }
 
     @GetMapping("/expenses")
+    @PreAuthorize("hasRole('USER')")
     public List<Expense> listUserExpenses(@AuthenticationPrincipal Jwt jwt) {
         if (jwt == null) {
             return Collections.emptyList();
