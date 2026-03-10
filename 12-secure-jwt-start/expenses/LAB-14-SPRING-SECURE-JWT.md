@@ -14,7 +14,7 @@ Este proyecto demuestra cómo implementar autenticación y autorización con JWT
 ## Prerrequisitos
 
 - Java 21 o superior
-- Maven 3.8+ (o el wrapper del proyecto: `mvnw`)
+- Maven 3.8+ (o el wrapper del proyecto: `mvn`)
 - Docker o Podman (opcional, para ejecutar la app en contenedor)
 
 ## Configuración inicial
@@ -96,7 +96,7 @@ La aplicación queda en: **http://localhost:8080**
 #### Windows:
 
 ```cmd
-mvnw.cmd clean package -DskipTests
+mvn.cmd clean package -DskipTests
 java -jar target/expenses-service-1.0.0-SNAPSHOT.jar
 ```
 
@@ -246,13 +246,13 @@ Ejecuta todos los tests; varios fallarán porque los JWTs del *start* no llevan 
 #### Windows:
 
 ```cmd
-mvnw.cmd test
+mvn.cmd test
 ```
 
 #### Mac/Linux:
 
 ```bash
-./mvnw test
+./mvn test
 ```
 
 Es esperable que fallen tests que asumen 401/403 o claims/roles correctos.
@@ -299,13 +299,13 @@ public String generateJwtForAdmin(String username) {
 #### Windows:
 
 ```cmd
-mvnw.cmd test -Dtest=JwtGeneratorTest
+mvn test -Dtest=JwtGeneratorTest
 ```
 
 #### Mac/Linux:
 
 ```bash
-./mvnw test -Dtest=JwtGeneratorTest
+mvn test -Dtest=JwtGeneratorTest
 ```
 
 ### Paso 4: Asegurar UserController
@@ -325,13 +325,13 @@ Comprueba:
 #### Windows:
 
 ```cmd
-mvnw.cmd test -Dtest=UserResourceTest
+mvn test -Dtest=UserControllerTest
 ```
 
 #### Mac/Linux:
 
 ```bash
-./mvnw test -Dtest=UserResourceTest
+mvn test -Dtest=UserControllerTest
 ```
 
 ### Paso 5: Asegurar AdminController
@@ -341,13 +341,13 @@ De forma análoga, el endpoint de admin debe tener `@PreAuthorize("hasRole('ADMI
 #### Windows:
 
 ```cmd
-mvnw.cmd test -Dtest=AdminResourceTest
+mvn test -Dtest=AdminControllerTest
 ```
 
 #### Mac/Linux:
 
 ```bash
-./mvnw test -Dtest=AdminResourceTest
+mvn test -Dtest=AdminControllerTest
 ```
 
 ### Paso 6: Verificar todos los tests
@@ -355,13 +355,13 @@ mvnw.cmd test -Dtest=AdminResourceTest
 #### Windows:
 
 ```cmd
-mvnw.cmd test
+mvn test
 ```
 
 #### Mac/Linux:
 
 ```bash
-./mvnw test
+mvn test
 ```
 
 Todos los tests deberían pasar.
@@ -402,7 +402,7 @@ expenses/
 
 - **No se encuentran las claves PEM:** ejecuta `GenerateKeys` y revisa que las rutas en `application.properties` coincidan con tu SO.
 - **Tests 401/403:** revisa que los JWTs incluyan el claim `groups` con `USER` y/o `ADMIN` y que `SecurityConfig` use el conversor que mapea `groups` a `ROLE_*`.
-- **Docker/Podman:** ejecuta `./mvnw package` (o `mvnw.cmd package` en Windows) antes de construir la imagen; si usas claves dentro del contenedor, configura rutas o variables de entorno.
+- **Docker/Podman:** ejecuta `./mvn package` (o `mvn.cmd package` en Windows) antes de construir la imagen; si usas claves dentro del contenedor, configura rutas o variables de entorno.
 
 ## Referencias
 
