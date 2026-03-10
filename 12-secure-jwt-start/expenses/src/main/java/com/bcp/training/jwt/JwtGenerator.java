@@ -12,6 +12,7 @@ import java.security.KeyFactory;
 import java.security.PrivateKey;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.util.Base64;
+import java.util.List;
 
 /**
  * Start version: tokens do not include audience nor groups.
@@ -49,13 +50,17 @@ public class JwtGenerator {
                 .compact();
     }
 
-    public String generateJwtForAdmin(String username) {
+
+    public  String generateJwtForAdmin( String username ) {
         return Jwts.builder()
                 .issuer(issuer)
-                .subject(username)
                 .claim("upn", username + "@example.com")
-                .claim("locale", "en_US")
+                .subject( username )
+                .claim( "locale", "en_US" )
                 .signWith(privateKey)
                 .compact();
     }
+
+
+
 }

@@ -18,7 +18,6 @@ public class AdminController {
     }
 
     @GetMapping("/expenses")
-    @PreAuthorize("hasRole('ADMIN')")
     public List<Expense> listAllExpenses() {
         return expensesService.list();
     }
