@@ -2,8 +2,9 @@ package com.bcp.training.expenses;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.resttestclient.TestRestTemplate;
+import org.springframework.boot.resttestclient.autoconfigure.AutoConfigureTestRestTemplate;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -22,12 +23,21 @@ import static org.assertj.core.api.Assertions.assertThat;
  * Migrated from Quarkus @QuarkusIntegrationTest equivalent.
  */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@AutoConfigureTestRestTemplate
 @ActiveProfiles("test")
 @Import(TestSecurityConfig.class)
+@org.springframework.test.annotation.DirtiesContext(classMode = org.springframework.test.annotation.DirtiesContext.ClassMode.AFTER_CLASS)
 class ExpenseCreationIT {
 
     @Autowired
     TestRestTemplate restTemplate;
+    @Autowired
+    ExpenseRepository expenseRepository;
+
+    @org.junit.jupiter.api.BeforeEach
+    void setUp() {
+        expenseRepository.deleteAll();
+    }
 
     @Test
     void testCreateExpense() {

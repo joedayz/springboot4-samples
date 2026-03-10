@@ -135,6 +135,7 @@ echo $TOKEN
 
 ## Paso 4: Probar los Endpoints
 
+
 ### 4.1 Probar el Endpoint OIDC
 
 Este endpoint muestra los roles del usuario autenticado:

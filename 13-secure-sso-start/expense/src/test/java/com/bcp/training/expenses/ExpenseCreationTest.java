@@ -2,7 +2,7 @@ package com.bcp.training.expenses;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
@@ -20,10 +20,18 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
 @Import(TestSecurityConfig.class)
+@org.springframework.test.annotation.DirtiesContext(classMode = org.springframework.test.annotation.DirtiesContext.ClassMode.AFTER_CLASS)
 class ExpenseCreationTest {
 
     @Autowired
     MockMvc mockMvc;
+    @Autowired
+    ExpenseRepository expenseRepository;
+
+    @org.junit.jupiter.api.BeforeEach
+    void setUp() {
+        expenseRepository.deleteAll();
+    }
 
     @Test
     void testCreateExpense() throws Exception {

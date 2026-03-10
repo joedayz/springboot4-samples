@@ -1,7 +1,10 @@
 package com.bcp.training.expenses;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.TestPropertySource;
 
 import java.math.BigDecimal;
 
@@ -9,24 +12,18 @@ import com.bcp.training.expenses.Expense.PaymentMethod;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
+@SpringBootTest(classes = { ExpenseValidator.class })
+@EnableConfigurationProperties(ExpenseConfiguration.class)
+@TestPropertySource(properties = "expense.max-amount=2000")
 class ExpenseValidationTest {
 
-    ExpenseConfiguration config;
+    @Autowired
     ExpenseValidator validator;
-
-    @BeforeEach
-    void setUp() {
-        config = mock(ExpenseConfiguration.class);
-        validator = new ExpenseValidator(config);
-    }
 
     @Test
     void testExpenseWithMaxAmountIsValid() {
         var maxAmount = new BigDecimal("2000");
-        when(config.getMaxAmount()).thenReturn(maxAmount);
         var expense = givenExpenseWithAmount(maxAmount);
 
         assertTrue(validator.isValid(expense));
@@ -35,7 +32,6 @@ class ExpenseValidationTest {
     @Test
     void testExpenseOverMaxAmountIsInvalid() {
         var maxAmount = new BigDecimal("2000");
-        when(config.getMaxAmount()).thenReturn(maxAmount);
         var expense = givenExpenseWithAmount(maxAmount.add(new BigDecimal("0.1")));
 
         assertFalse(validator.isValid(expense));

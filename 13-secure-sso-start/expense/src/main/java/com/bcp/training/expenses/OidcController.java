@@ -1,4 +1,4 @@
-package com.bcp.training.oidc;
+package com.bcp.training.expenses;
 
 import org.springframework.http.CacheControl;
 import org.springframework.http.ResponseEntity;
