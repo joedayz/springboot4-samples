@@ -3,6 +3,7 @@ package com.bcp.training.expenses;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -35,18 +36,31 @@ public class SecurityConfig {
     private String publicKeyLocation;
 
     @Bean
+    @Order(1)
+    public SecurityFilterChain jwtEndpointFilterChain(HttpSecurity http) throws Exception {
+        http.securityMatcher("/jwt/**")
+            .authorizeHttpRequests(auth -> auth.anyRequest().permitAll());
+        return http.build();
+    }
+
+    @Bean
+    @Order(2)
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http
+        http.securityMatcher("/user/**", "/admin/**", "/**")
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/jwt/**").permitAll()
                 .requestMatchers("/user/**").hasRole("USER")
                 .requestMatchers("/admin/**").hasRole("ADMIN")
                 .anyRequest().authenticated()
             )
             .oauth2ResourceServer(oauth2 -> oauth2
-                .jwt(jwt -> jwt
-                        .decoder(jwtDecoder())
-                        .jwtAuthenticationConverter(jwtAuthenticationConverter())));
+                .jwt(jwt -> {
+                    try {
+                        jwt.decoder(jwtDecoder())
+                            .jwtAuthenticationConverter(jwtAuthenticationConverter());
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                }));
         return http.build();
     }
 
