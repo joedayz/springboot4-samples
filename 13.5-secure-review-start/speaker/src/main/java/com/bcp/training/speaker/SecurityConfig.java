@@ -23,6 +23,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
+            .cors(cors -> {})
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/speakers/**").authenticated()
                 .anyRequest().authenticated()
