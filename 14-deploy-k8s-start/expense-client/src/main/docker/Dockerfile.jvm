@@ -1,7 +1,10 @@
 # Spring Boot JAR - run after: mvn package
 FROM eclipse-temurin:21-jre-alpine
 WORKDIR /app
-COPY target/*.jar app.jar
+# Usuario no root para cumplir runAsNonRoot en Kubernetes
+RUN addgroup -g 1000 -S spring && adduser -u 1000 -S -G spring spring
+COPY --chown=spring:spring target/*.jar app.jar
+USER 1000:1000
 EXPOSE 8080
 ENV SERVER_PORT=8080
 ENTRYPOINT ["java", "-jar", "app.jar"]

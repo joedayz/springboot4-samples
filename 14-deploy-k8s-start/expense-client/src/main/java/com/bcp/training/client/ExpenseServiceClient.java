@@ -14,7 +14,7 @@ public class ExpenseServiceClient {
     private final RestClient restClient;
 
     public ExpenseServiceClient(RestClient.Builder builder,
-                                @Value("${expense.service.url:http://localhost:8081}") String baseUrl) {
+                                @Value("${EXPENSE_SVC:http://localhost:8080}") String baseUrl) {
         this.restClient = builder.baseUrl(baseUrl).build();
     }
 
