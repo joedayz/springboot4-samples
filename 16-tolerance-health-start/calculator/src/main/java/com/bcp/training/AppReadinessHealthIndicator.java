@@ -1,11 +1,11 @@
 package com.bcp.training;
 
-import org.springframework.boot.actuate.health.Health;
-import org.springframework.boot.actuate.health.HealthIndicator;
+import org.springframework.boot.health.contributor.Health;
+import org.springframework.boot.health.contributor.HealthIndicator;
 import org.springframework.stereotype.Component;
 
 @Component
-public class ReadinessHealthIndicator implements HealthIndicator {
+public class AppReadinessHealthIndicator implements HealthIndicator {
 
     private static final String HEALTH_CHECK_NAME = "Readiness";
     private int counter = 0;

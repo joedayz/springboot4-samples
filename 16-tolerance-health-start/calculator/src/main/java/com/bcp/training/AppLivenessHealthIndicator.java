@@ -1,17 +1,18 @@
 package com.bcp.training;
 
+
 import com.bcp.training.service.StateService;
-import org.springframework.boot.actuate.health.Health;
-import org.springframework.boot.actuate.health.HealthIndicator;
+import org.springframework.boot.health.contributor.Health;
+import org.springframework.boot.health.contributor.HealthIndicator;
 import org.springframework.stereotype.Component;
 
 @Component
-public class LivenessHealthIndicator implements HealthIndicator {
+public class AppLivenessHealthIndicator implements HealthIndicator {
 
     private static final String HEALTH_CHECK_NAME = "Liveness";
     private final StateService applicationState;
 
-    public LivenessHealthIndicator(StateService applicationState) {
+    public AppLivenessHealthIndicator(StateService applicationState) {
         this.applicationState = applicationState;
     }
 
