@@ -36,7 +36,7 @@ Revisa los endpoints en `src/main/java/com/bcp/training/MonitorResource.java`. E
 El proyecto ya incluye la dependencia **Resilience4j** para Spring Boot 3/4. Verifica en `pom.xml` que existan:
 
 - `resilience4j-spring-boot3`
-- `spring-boot-starter-aop`
+- `spring-boot-starter-aspectj`
 
 ### Iniciar la Aplicación en Modo Desarrollo
 
