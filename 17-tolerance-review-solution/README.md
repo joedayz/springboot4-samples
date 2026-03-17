@@ -1,8 +1,6 @@
-# 17-tolerance-review-start (Spring Boot 4)
+# 17-tolerance-review-solution (Spring Boot 4)
 
-Revisión de tolerancia a fallos: servicio **speaker** (JPA) y servicio **session** (JPA, RestClient al servicio speaker).
-
-**Guía del lab:** Ver [LAB-20-GUIDE.md](LAB-20-GUIDE.md) para las tareas (health, fallback, retry, circuit breaker, timeout) con Spring Boot 4 y Resilience4j.
+Solución del lab de revisión de tolerancia a fallos: servicio **speaker** (JPA) y servicio **session** (JPA, RestClient, Resilience4j).
 
 ## Módulos
 
