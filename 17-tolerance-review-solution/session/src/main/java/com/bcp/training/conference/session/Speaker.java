@@ -38,7 +38,7 @@ public class Speaker {
     }
 
     public static void enrichFromService(SpeakerFromService dto, Speaker speaker) {
-        speaker.setName(dto.getNameFirst() + " " + dto.getNameLast());
+        speaker.setName((dto.getNameFirst() + " " + dto.getNameLast()).trim());
         speaker.setUuid(dto.getUuid());
     }
 

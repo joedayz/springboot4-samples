@@ -24,6 +24,21 @@ Completar el laboratorio asegurando que el servicio **session** pase todas las p
 - Java 21 o superior
 - Maven 3.8+ o el wrapper incluido (`./mvnw` o `.\mvnw.cmd`)
 - Acceso al proyecto `17-tolerance-review-start`
+- Spring Boot 4.0.3 (el proyecto usa esta versión por compatibilidad con dependencias)
+
+## ⚠️ Consideraciones Importantes para Spring Boot 4
+
+### Cambios de API en Spring Boot 4
+
+1. **Health Indicators**: El paquete correcto es `org.springframework.boot.actuate.health.*` (NO `org.springframework.boot.health.contributor.*`)
+
+2. **Testing sin @MockBean**: Spring Boot 4 eliminó las anotaciones `@MockBean` y `@AutoConfigureMockMvc`. La solución recomendada es:
+   - Usar `@Profile("!test")` en beans reales que no quieres en tests
+   - Crear `@TestConfiguration` con mocks de Mockito
+   - Usar `@ActiveProfiles("test")` en tus tests
+   - Configurar MockMvc manualmente con `MockMvcBuilders.webAppContextSetup()`
+
+3. **Configuración de Health Endpoints**: Es necesario agregar propiedades adicionales para que los detalles de los componentes de health sean visibles en los tests
 
 ---
 
@@ -42,6 +57,8 @@ Deben devolver:
 
 Crea o abre `session/src/main/java/com/bcp/training/conference/session/LivenessIndicator.java` e implementa `HealthIndicator`. El indicador debe devolver `Health.up()` con un detalle `"message", "Service is alive"`.
 
+**⚠️ IMPORTANTE:** En Spring Boot 4, el paquete correcto es `org.springframework.boot.actuate.health.*`
+
 **Código a implementar:**
 
 ```java
@@ -54,16 +71,18 @@ import org.springframework.stereotype.Component;
 @Component("serviceIsAlive")
 public class LivenessIndicator implements HealthIndicator {
 
-    @Override
-    public Health health() {
-        return Health.up().withDetail("message", "Service is alive").build();
-    }
+   @Override
+   public Health health() {
+      return Health.up().withDetail("message", "Service is alive").build();
+   }
 }
 ```
 
 #### 1.2 Implementar ReadinessIndicator
 
 Crea o abre `session/src/main/java/com/bcp/training/conference/session/ReadinessIndicator.java` e implementa `HealthIndicator` con detalle `"message", "Service is ready"`.
+
+**⚠️ IMPORTANTE:** En Spring Boot 4, el paquete correcto es `org.springframework.boot.actuate.health.*`
 
 **Código a implementar:**
 
@@ -77,16 +96,18 @@ import org.springframework.stereotype.Component;
 @Component("serviceIsReady")
 public class ReadinessIndicator implements HealthIndicator {
 
-    @Override
-    public Health health() {
-        return Health.up().withDetail("message", "Service is ready").build();
-    }
+   @Override
+   public Health health() {
+      return Health.up().withDetail("message", "Service is ready").build();
+   }
 }
 ```
 
 #### 1.3 Configurar grupos de health
 
 En `session/src/main/resources/application.properties` asegura que los probes estén habilitados y que los indicadores formen parte de los grupos:
+
+**⚠️ IMPORTANTE:** Las propiedades `show-details` y `show-components` son necesarias para que los tests puedan verificar los componentes de health.
 
 ```properties
 management.endpoints.web.exposure.include=health
@@ -95,9 +116,73 @@ management.health.livenessstate.enabled=true
 management.health.readinessstate.enabled=true
 management.health.liveness.include=livenessState,serviceIsAlive
 management.health.readiness.include=readinessState,serviceIsReady,db
+
+# Necesario para que los tests puedan verificar los detalles de los componentes
+management.endpoint.health.show-details=always
+management.endpoint.health.show-components=always
 ```
 
-#### 1.4 Verificar las pruebas
+#### 1.4 Configurar SpeakerServiceClient para tests
+
+**⚠️ CRÍTICO:** Spring Boot 4 no incluye `@MockBean`. La solución es excluir el bean real de los tests usando `@Profile`.
+
+En `session/src/main/java/com/bcp/training/conference/session/SpeakerServiceClient.java`, agrega la anotación `@Profile("!test")` para excluir este bean cuando el perfil "test" esté activo:
+
+```java
+import org.springframework.context.annotation.Profile;
+
+@Component
+@Profile("!test")  // Excluir del contexto cuando el perfil "test" está activo
+public class SpeakerServiceClient {
+    // ... resto del código
+}
+```
+
+#### 1.5 Configurar los tests
+
+Los tests en `SessionControllerTest` deben seguir este patrón para Spring Boot 4:
+
+```java
+import org.mockito.Mockito;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.annotation.Bean;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+
+@SpringBootTest
+@ActiveProfiles("test")  // Activa el perfil test para excluir SpeakerServiceClient real
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+class SessionControllerTest {
+
+    @TestConfiguration
+    static class TestConfig {
+        @Bean
+        public SpeakerServiceClient speakerServiceClient() {
+            return Mockito.mock(SpeakerServiceClient.class);  // Mock manual con Mockito
+        }
+    }
+
+    @Autowired
+    private WebApplicationContext webApplicationContext;
+
+    private MockMvc mvc;
+
+    @Autowired
+    private SpeakerServiceClient speakerServiceClient;
+
+    @BeforeEach
+    void setup() {
+        mvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
+        Mockito.reset(speakerServiceClient);
+    }
+    
+    // ... resto de los tests
+}
+```
+
+#### 1.6 Verificar las pruebas
 
 Desde el directorio **session**:
 
@@ -115,6 +200,10 @@ Desde el directorio **session**:
 ```
 Tests run: 2, Failures: 0, Errors: 0, Skipped: 0
 ```
+
+**Nota sobre los tests:** Los tests verifican dos cosas:
+1. Que `/actuator/health/liveness` y `/actuator/health/readiness` devuelven `{"status":"UP"}`
+2. Que el endpoint principal `/actuator/health` expone los componentes con sus detalles (por eso necesitamos `show-details` y `show-components`)
 
 ---
 
@@ -282,26 +371,26 @@ El endpoint `GET /sessions/{sessionId}/speakers` debe responder en como máximo 
 
 #### 5.1 Añadir TimeLimiter y fallback
 
-Resilience4j ofrece `@TimeLimiter`. Crea un método que obtenga la sesión (por ejemplo delegando en `sessionStore.findById(sessionId)`) y anótalo con `@TimeLimiter` de 1 segundo y un `fallbackMethod` que use `sessionStore.findByIdWithoutEnrichment(sessionId)`.
+Resilience4j ofrece `@TimeLimiter`. **Importante:** `@TimeLimiter` solo funciona con métodos que devuelven `CompletableFuture` o `CompletionStage`. Crea un método que devuelva `CompletableFuture.supplyAsync(() -> sessionStore.findById(sessionId))` y anótalo con `@TimeLimiter` de 1 segundo y un `fallbackMethod` que devuelva `CompletableFuture.completedFuture(sessionStore.findByIdWithoutEnrichment(sessionId))`.
 
-Ejemplo de método con timeout y fallback en el mismo controller:
+Ejemplo en el controller:
 
 ```java
 @GetMapping("/{sessionId}/speakers")
 public Set<Speaker> sessionSpeakers(@PathVariable String sessionId) {
-    Optional<Session> session = findSessionSpeakers(sessionId);
+    Optional<Session> session = findSessionSpeakers(sessionId).join();
     return session.map(Session::getSpeakers)
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 }
 
 @TimeLimiter(name = "sessionSpeakers", fallbackMethod = "findSessionSpeakersFallback")
-public Optional<Session> findSessionSpeakers(String sessionId) {
-    return sessionStore.findById(sessionId);
+public CompletableFuture<Optional<Session>> findSessionSpeakers(String sessionId) {
+    return CompletableFuture.supplyAsync(() -> sessionStore.findById(sessionId));
 }
 
-public Optional<Session> findSessionSpeakersFallback(String sessionId, Exception ex) {
+public CompletableFuture<Optional<Session>> findSessionSpeakersFallback(String sessionId, Exception ex) {
     log.warn("Fallback for GET /sessions/{}/speakers", sessionId, ex);
-    return sessionStore.findByIdWithoutEnrichment(sessionId);
+    return CompletableFuture.completedFuture(sessionStore.findByIdWithoutEnrichment(sessionId));
 }
 ```
 
@@ -311,9 +400,7 @@ Configura el time limiter en `application.properties`:
 resilience4j.timelimiter.instances.sessionSpeakers.timeoutDuration=1s
 ```
 
-Import: `import io.github.resilience4j.timelimiter.annotation.TimeLimiter;`
-
-**Nota:** Si `@TimeLimiter` con método síncrono no está soportado en tu versión, puedes usar un método que devuelva `CompletableFuture<Optional<Session>>` o aplicar el timeout de otra forma (por ejemplo configurando timeout en el cliente HTTP al servicio speaker).
+Imports: `import io.github.resilience4j.timelimiter.annotation.TimeLimiter;` y `import java.util.concurrent.CompletableFuture;`
 
 #### 5.2 Verificar la prueba
 
@@ -344,6 +431,42 @@ Desde el directorio **session**:
 ```
 
 **Resultado esperado:** Todas las pruebas pasan (por ejemplo 6 tests, 0 fallos).
+
+```
+[INFO] Tests run: 6, Failures: 0, Errors: 0, Skipped: 0
+[INFO] BUILD SUCCESS
+```
+
+## Notas Importantes sobre los Tests
+
+### Datos de Prueba
+
+Los tests usan datos pre-cargados desde `data.sql`. Los speakers en la base de datos son:
+- Emmanuel (uuid: s-1-1)
+- Clement (uuid: s-1-2)
+- Alex (uuid: s-1-3)
+- Burr (uuid: s-1-4)
+
+**⚠️ IMPORTANTE:** Los mocks en los tests deben usar nombres que coincidan con estos datos. Por ejemplo:
+
+```java
+// CORRECTO: Mock que coincide con el speaker de la BD
+SpeakerFromService s = new SpeakerFromService("s-1-1", "Emmanuel", "");
+
+// INCORRECTO: Mock con nombre diferente causará fallos en assertions
+SpeakerFromService s = new SpeakerFromService("s-1-1", "First", "Last");
+```
+
+### Método enrichFromService
+
+El método `Speaker.enrichFromService()` combina `nameFirst + " " + nameLast`. **Asegúrate de usar `.trim()`** para eliminar espacios extra cuando `nameLast` está vacío:
+
+```java
+public static void enrichFromService(SpeakerFromService dto, Speaker speaker) {
+    speaker.setName((dto.getNameFirst() + " " + dto.getNameLast()).trim());
+    speaker.setUuid(dto.getUuid());
+}
+```
 
 ---
 
@@ -384,29 +507,81 @@ Session estará en `http://localhost:8081`, speaker en `http://localhost:8082`.
 ## Resumen de conceptos (Spring Boot / Resilience4j)
 
 ### Health (Actuator)
-- Indicadores personalizados que implementan `HealthIndicator`.
-- Grupos `liveness` y `readiness` para Kubernetes.
+- Indicadores personalizados que implementan `HealthIndicator` del paquete `org.springframework.boot.actuate.health.*`
+- Grupos `liveness` y `readiness` para Kubernetes
+- En Spring Boot 4, necesitas configurar `show-details` y `show-components` explícitamente para exponer detalles de los componentes
 
 ### @CircuitBreaker (Resilience4j)
-- Abre el circuito tras N fallos y usa `fallbackMethod` mientras está abierto.
-- Parámetros típicos: `slidingWindowSize`, `failureRateThreshold`, `waitDurationInOpenState`.
+- Abre el circuito tras N fallos y usa `fallbackMethod` mientras está abierto
+- Parámetros típicos: `slidingWindowSize`, `failureRateThreshold`, `waitDurationInOpenState`
+- El método fallback debe tener la misma firma que el método original más un parámetro `Exception`
 
 ### @Retry (Resilience4j)
-- Reintentos con `maxAttempts`, `waitDuration` y `retryExceptions`.
+- Reintentos con `maxAttempts`, `waitDuration` y `retryExceptions`
+- Puedes configurarlo con anotaciones o en `application.properties`
 
 ### @TimeLimiter (Resilience4j)
-- Timeout máximo de ejecución; opcionalmente `fallbackMethod` si se supera.
+- Timeout máximo de ejecución; opcionalmente `fallbackMethod` si se supera
+- **Importante:** Solo funciona con métodos que devuelven `CompletableFuture` o `CompletionStage`
+
+### Testing en Spring Boot 4
+- **No existe `@MockBean`**: Usa `@Profile("!test")` + `@TestConfiguration` con mocks de Mockito
+- **No existe `@AutoConfigureMockMvc`**: Configura `MockMvc` manualmente con `MockMvcBuilders.webAppContextSetup()`
+- Usa `@ActiveProfiles("test")` para activar el perfil de test
 
 ---
 
+## Troubleshooting
+
+### Error: "cannot find symbol class Health" o "package org.springframework.boot.health.contributor does not exist"
+
+**Solución:** Estás usando el import incorrecto. En Spring Boot 4, usa:
+```java
+import org.springframework.boot.actuate.health.Health;
+import org.springframework.boot.actuate.health.HealthIndicator;
+```
+
+### Error: "Failed to load ApplicationContext" en tests
+
+**Solución:** 
+1. Verifica que `SpeakerServiceClient` tenga `@Profile("!test")`
+2. Verifica que tu test tenga `@ActiveProfiles("test")`
+3. Verifica que tengas un `@TestConfiguration` con el mock
+
+### Tests de health fallan con "JSON path no encontrado"
+
+**Solución:** Agrega estas propiedades en `application.properties`:
+```properties
+management.endpoint.health.show-details=always
+management.endpoint.health.show-components=always
+```
+
+### Assertion falla: expected "Emmanuel" but was "First Last"
+
+**Solución:** Los mocks deben usar nombres que coincidan con los datos pre-cargados en `data.sql`. Usa:
+```java
+new SpeakerFromService("s-1-1", "Emmanuel", "")
+```
+
 ## Referencias
 
-- [Spring Boot Actuator – Health](https://docs.spring.io/spring-boot/docs/current/reference/html/actuator.html#actuator.endpoints.health)
+- [Spring Boot 4 Actuator – Health](https://docs.spring.io/spring-boot/docs/current/reference/html/actuator.html#actuator.endpoints.health)
 - [Resilience4j with Spring Boot](https://resilience4j.readthedocs.io/en/latest/springboot3.html)
-- [Spring Boot 4 & Resilience4j](https://docs.spring.io/spring-boot/docs/current/reference/html/io.html#io.resilience4j)
+- [Spring Boot 4 Testing](https://docs.spring.io/spring-boot/docs/current/reference/html/features.html#features.testing)
+- [Mockito Documentation](https://javadoc.io/doc/org.mockito/mockito-core/latest/org/mockito/Mockito.html)
+
+## Cambios en Spring Boot 4
+
+Este laboratorio documenta cambios importantes en Spring Boot 4:
+
+1. **Paquete Health**: Migrado de `boot.health.contributor` a `boot.actuate.health`
+2. **Testing**: Eliminadas `@MockBean` y `@AutoConfigureMockMvc`, requiere configuración manual
+3. **Health Details**: Requiere configuración explícita de `show-details` y `show-components`
+4. **Versión**: Se recomienda usar Spring Boot 4.0.3 o superior por mejoras en resolución de dependencias
 
 ---
 
 ¡Disfruta del laboratorio!
 
-José Díaz
+José Díaz  
+GitHub: [@joedayz](https://github.com/joedayz)

@@ -1,16 +1,21 @@
 package com.bcp.training.conference.session;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
@@ -21,20 +26,41 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
-@AutoConfigureMockMvc
+@ActiveProfiles("test")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class SessionControllerTest {
 
-    @Autowired
-    MockMvc mvc;
+    @TestConfiguration
+    static class TestConfig {
+        @Bean
+        public SpeakerServiceClient speakerServiceClient() {
+            return Mockito.mock(SpeakerServiceClient.class);
+        }
+    }
 
-    @MockBean
-    SpeakerServiceClient speakerServiceClient;
+    @Autowired
+    private WebApplicationContext webApplicationContext;
+
+    private MockMvc mvc;
+
+    @Autowired
+    private SpeakerServiceClient speakerServiceClient;
+
+    @BeforeEach
+    void setup() {
+        mvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
+        Mockito.reset(speakerServiceClient);
+    }
 
     @Test
     @Order(1)
     void testLivenessProbe() throws Exception {
         mvc.perform(get("/actuator/health/liveness").accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("UP"));
+        
+        // Also test that serviceIsAlive indicator is accessible via main health endpoint
+        mvc.perform(get("/actuator/health").accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.components.serviceIsAlive.status").value("UP"))
                 .andExpect(jsonPath("$.components.serviceIsAlive.details.message").value("Service is alive"));
@@ -44,6 +70,11 @@ class SessionControllerTest {
     @Order(1)
     void testReadinessProbe() throws Exception {
         mvc.perform(get("/actuator/health/readiness").accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("UP"));
+        
+        // Also test that serviceIsReady indicator is accessible via main health endpoint
+        mvc.perform(get("/actuator/health").accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.components.serviceIsReady.status").value("UP"))
                 .andExpect(jsonPath("$.components.serviceIsReady.details.message").value("Service is ready"));
@@ -62,7 +93,7 @@ class SessionControllerTest {
     @Test
     @Order(1)
     void testSessionCircuitBreaker() throws Exception {
-        SpeakerFromService s = new SpeakerFromService("s-1-1", "First", "Last");
+        SpeakerFromService s = new SpeakerFromService("s-1-1", "Emmanuel", "");
         when(speakerServiceClient.listAll())
                 .thenThrow(new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR))
                 .thenThrow(new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR))
@@ -79,7 +110,7 @@ class SessionControllerTest {
     void testSessionSpeakerFallback() throws Exception {
         when(speakerServiceClient.listAll()).thenAnswer(invocation -> {
             Thread.sleep(2000);
-            SpeakerFromService s = new SpeakerFromService("s-1-1", "First", "Last");
+            SpeakerFromService s = new SpeakerFromService("s-1-1", "Emmanuel", "");
             return List.of(s);
         });
         mvc.perform(get("/sessions/s-1-1/speakers").accept(MediaType.APPLICATION_JSON))

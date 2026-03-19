@@ -15,6 +15,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
+
 @RestController
 @RequestMapping("/sessions")
 public class SessionController {
@@ -33,11 +34,6 @@ public class SessionController {
         return sessionStore.findAll();
     }
 
-    public Collection<Session> allSessionsFallback(Exception ex) {
-        log.warn("Fallback for GET /sessions", ex);
-        return sessionStore.findAllWithoutEnrichment();
-    }
-
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public Session createSession(@RequestBody Session session) {
@@ -48,12 +44,6 @@ public class SessionController {
     @CircuitBreaker(name = "sessionDetail", fallbackMethod = "retrieveSessionFallback")
     public Session retrieveSession(@PathVariable String sessionId) {
         return sessionStore.findById(sessionId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
-    }
-
-    public Session retrieveSessionFallback(String sessionId, Exception ex) {
-        log.warn("Fallback for GET /sessions/{}", sessionId, ex);
-        return sessionStore.findByIdWithoutEnrichment(sessionId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
     }
 
@@ -72,24 +62,14 @@ public class SessionController {
 
     @GetMapping("/{sessionId}/speakers")
     public Set<Speaker> sessionSpeakers(@PathVariable String sessionId) {
-        Optional<Session> session = findSessionSpeakers(sessionId).join();
-        return session.map(Session::getSpeakers)
+        return sessionStore.findById(sessionId)
+                .map(Session::getSpeakers)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
     }
 
-    @TimeLimiter(name = "sessionSpeakers", fallbackMethod = "findSessionSpeakersFallback")
-    public CompletableFuture<Optional<Session>> findSessionSpeakers(String sessionId) {
-        return CompletableFuture.supplyAsync(() -> sessionStore.findById(sessionId));
-    }
-
-    public CompletableFuture<Optional<Session>> findSessionSpeakersFallback(String sessionId, Exception ex) {
-        log.warn("Fallback for GET /sessions/{}/speakers", sessionId, ex);
-        return CompletableFuture.completedFuture(sessionStore.findByIdWithoutEnrichment(sessionId));
-    }
-
     @PutMapping("/{sessionId}/speakers/{speakerName}")
+    @Retry(name = "addSpeaker", fallbackMethod = "addSessionSpeakerFallback")
     @Transactional
-    @Retry(name = "addSpeaker")
     public Session addSessionSpeaker(@PathVariable String sessionId, @PathVariable String speakerName) {
         Session session = sessionStore.findByIdWithoutEnrichmentMaybeFail(sessionId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
@@ -103,5 +83,27 @@ public class SessionController {
         if (sessionOpt.isEmpty()) throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         sessionStore.removeSpeakerFromSession(speakerName, sessionOpt.get());
         return sessionStore.findByIdWithoutEnrichment(sessionId).orElseThrow();
+    }
+
+
+    @TimeLimiter(name = "sessionSpeakers", fallbackMethod = "findSessionSpeakersFallback")
+    public CompletableFuture<Optional<Session>> findSessionSpeakers(String sessionId) {
+        return CompletableFuture.supplyAsync(() -> sessionStore.findById(sessionId));
+    }
+
+    public CompletableFuture<Optional<Session>> findSessionSpeakersFallback(String sessionId, Exception ex) {
+        log.warn("Fallback for GET /sessions/{}/speakers", sessionId, ex);
+        return CompletableFuture.completedFuture(sessionStore.findByIdWithoutEnrichment(sessionId));
+    }
+
+    public Collection<Session> allSessionsFallback(Exception ex) {
+        log.warn("Fallback for GET /sessions", ex);
+        return sessionStore.findAllWithoutEnrichment();
+    }
+
+    public Session retrieveSessionFallback(String sessionId, Exception ex) {
+        log.warn("Fallback for GET /sessions/{}", sessionId, ex);
+        return sessionStore.findByIdWithoutEnrichment(sessionId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
     }
 }
