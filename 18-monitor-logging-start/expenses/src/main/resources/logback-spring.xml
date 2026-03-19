@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <!-- Valores reutilizados por consola y por archivo -->
+    <springProperty scope="context" name="LOG_FILE" source="logging.file.name"
+                    defaultValue="${HOME}/DO378/monitor-logging/dev.logs"/>
+    <springProperty scope="context" name="FILE_PATTERN" source="logging.pattern.file"
+                    defaultValue="%d %-5p [%F] %m%n"/>
+    <springProperty scope="context" name="ROOT_LEVEL" source="logging.level.root" defaultValue="INFO"/>
+    <springProperty scope="context" name="EXPENSE_LEVEL" source="logging.level.com.bcp.training.expense" defaultValue="INFO"/>
+
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>${FILE_PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+    <springProfile name="dev">
+        <!-- En modo dev escribimos a un archivo fijo (sin rolling) para que el laboratorio sea determinista. -->
+        <appender name="DEV_FILE" class="ch.qos.logback.core.FileAppender">
+            <file>${LOG_FILE}</file>
+            <append>true</append>
+            <encoder>
+                <pattern>${FILE_PATTERN}</pattern>
+            </encoder>
+        </appender>
+
+        <logger name="com.bcp.training.expense" level="${EXPENSE_LEVEL}" additivity="true"/>
+
+        <root level="${ROOT_LEVEL}">
+            <appender-ref ref="CONSOLE"/>
+            <appender-ref ref="DEV_FILE"/>
+        </root>
+    </springProfile>
+</configuration>
+

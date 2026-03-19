@@ -11,6 +11,7 @@ Proyectos migrados desde el repositorio **quarkus-bcp-2025** a **Spring Boot 4.0
 | **16-tolerance-health-start** | Health liveness/readiness | `calculator` |
 | **17-tolerance-review-start** | Revisión tolerancia: speaker (JPA) + session (JPA, RestClient a speaker) | `speaker`, `session` |
 | **18-monitor-logging-start** | Logging | `expenses` |
+| **18-monitor-logging-solution** | Logging + ELK | `expenses` |
 | **19-monitor-metrics-start** | Métricas (Actuator, Prometheus) | `expense-service` |
 | **20-monitor-trace-start** | Trazabilidad (adder, multiplier, solver) | `adder`, `multiplier`, `solver` |
 | **21-monitor-review-start** | Revisión monitor: speakers, sessions, dashboard React | `speakers`, `sessions`, `dashboard` |

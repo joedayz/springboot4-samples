@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <springProperty scope="context" name="LOG_FILE" source="logging.file.name"
+                    defaultValue="${HOME}/DO378/monitor-logging/dev.logs"/>
+    <springProperty scope="context" name="FILE_PATTERN" source="logging.pattern.file"
+                    defaultValue="%d %-5p [%F] %m%n"/>
+    <springProperty scope="context" name="ROOT_LEVEL" source="logging.level.root" defaultValue="INFO"/>
+    <springProperty scope="context" name="EXPENSE_LEVEL" source="logging.level.com.bcp.training.expense" defaultValue="INFO"/>
+
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>${FILE_PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+    <!-- Perfil de laboratorio local: archivo fijo dev.logs (sin rolling) -->
+    <springProfile name="dev">
+        <appender name="DEV_FILE" class="ch.qos.logback.core.FileAppender">
+            <file>${LOG_FILE}</file>
+            <append>true</append>
+            <encoder>
+                <pattern>${FILE_PATTERN}</pattern>
+            </encoder>
+        </appender>
+
+        <logger name="com.bcp.training.expense" level="${EXPENSE_LEVEL}" additivity="true"/>
+
+        <root level="${ROOT_LEVEL}">
+            <appender-ref ref="CONSOLE"/>
+            <appender-ref ref="DEV_FILE"/>
+        </root>
+    </springProfile>
+
+    <!-- Perfil para el stack ELK (container): syslog a Fluentd + log archivo inspeccionable -->
+    <springProfile name="elk">
+        <appender name="SYSLOG" class="ch.qos.logback.classic.net.SyslogAppender">
+            <!-- Fluentd dentro de docker-compose -->
+            <syslogHost>fluentd</syslogHost>
+            <port>5140</port>
+            <facility>LOCAL0</facility>
+            <!-- Formateamos el mensaje tal cual para que Fluentd/Elastic tenga contenido consistente -->
+            <layout class="ch.qos.logback.classic.PatternLayout">
+                <pattern>${FILE_PATTERN}</pattern>
+            </layout>
+        </appender>
+
+        <appender name="ELK_FILE" class="ch.qos.logback.core.FileAppender">
+            <!-- Montado por docker-compose en ./logs -->
+            <file>/var/log/expenses/app.log</file>
+            <append>true</append>
+            <encoder>
+                <pattern>${FILE_PATTERN}</pattern>
+            </encoder>
+        </appender>
+
+        <logger name="com.bcp.training.expense" level="${EXPENSE_LEVEL}" additivity="true"/>
+
+        <root level="${ROOT_LEVEL}">
+            <appender-ref ref="CONSOLE"/>
+            <appender-ref ref="SYSLOG"/>
+            <appender-ref ref="ELK_FILE"/>
+        </root>
+    </springProfile>
+</configuration>
+
