@@ -13,6 +13,7 @@ Proyectos migrados desde el repositorio **quarkus-bcp-2025** a **Spring Boot 4.0
 | **18-monitor-logging-start** | Logging | `expenses` |
 | **18-monitor-logging-solution** | Logging + ELK | `expenses` |
 | **19-monitor-metrics-start** | Métricas (Actuator, Prometheus) | `expense-service` |
+| **19-monitor-metrics-solution** | Métricas + Dashboards (Prometheus, Grafana) | `expense-service` |
 | **20-monitor-trace-start** | Trazabilidad (adder, multiplier, solver) | `adder`, `multiplier`, `solver` |
 | **21-monitor-review-start** | Revisión monitor: speakers, sessions, dashboard React | `speakers`, `sessions`, `dashboard` |
 
