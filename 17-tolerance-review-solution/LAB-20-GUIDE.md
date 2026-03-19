@@ -30,7 +30,7 @@ Completar el laboratorio asegurando que el servicio **session** pase todas las p
 
 ### Cambios de API en Spring Boot 4
 
-1. **Health Indicators**: El paquete correcto es `org.springframework.boot.actuate.health.*` (NO `org.springframework.boot.health.contributor.*`)
+1. **Health Indicators**: El paquete correcto es `org.springframework.boot.health.contributor.*` (NO `org.springframework.boot.actuate.health.*`)
 
 2. **Testing sin @MockBean**: Spring Boot 4 eliminó las anotaciones `@MockBean` y `@AutoConfigureMockMvc`. La solución recomendada es:
    - Usar `@Profile("!test")` en beans reales que no quieres en tests
@@ -57,15 +57,16 @@ Deben devolver:
 
 Crea o abre `session/src/main/java/com/bcp/training/conference/session/LivenessIndicator.java` e implementa `HealthIndicator`. El indicador debe devolver `Health.up()` con un detalle `"message", "Service is alive"`.
 
-**⚠️ IMPORTANTE:** En Spring Boot 4, el paquete correcto es `org.springframework.boot.actuate.health.*`
+**⚠️ IMPORTANTE:** En Spring Boot 4, el paquete correcto es `org.springframework.boot.health.contributor.*`
 
 **Código a implementar:**
 
 ```java
 package com.bcp.training.conference.session;
 
-import org.springframework.boot.actuate.health.Health;
-import org.springframework.boot.actuate.health.HealthIndicator;
+
+import org.springframework.boot.health.contributor.Health;
+import org.springframework.boot.health.contributor.HealthIndicator;
 import org.springframework.stereotype.Component;
 
 @Component("serviceIsAlive")
@@ -82,15 +83,16 @@ public class LivenessIndicator implements HealthIndicator {
 
 Crea o abre `session/src/main/java/com/bcp/training/conference/session/ReadinessIndicator.java` e implementa `HealthIndicator` con detalle `"message", "Service is ready"`.
 
-**⚠️ IMPORTANTE:** En Spring Boot 4, el paquete correcto es `org.springframework.boot.actuate.health.*`
+**⚠️ IMPORTANTE:** En Spring Boot 4, el paquete correcto es `org.springframework.boot.health.contributor.*`
 
 **Código a implementar:**
 
 ```java
 package com.bcp.training.conference.session;
 
-import org.springframework.boot.actuate.health.Health;
-import org.springframework.boot.actuate.health.HealthIndicator;
+
+import org.springframework.boot.health.contributor.Health;
+import org.springframework.boot.health.contributor.HealthIndicator;
 import org.springframework.stereotype.Component;
 
 @Component("serviceIsReady")
@@ -507,7 +509,7 @@ Session estará en `http://localhost:8081`, speaker en `http://localhost:8082`.
 ## Resumen de conceptos (Spring Boot / Resilience4j)
 
 ### Health (Actuator)
-- Indicadores personalizados que implementan `HealthIndicator` del paquete `org.springframework.boot.actuate.health.*`
+- Indicadores personalizados que implementan `HealthIndicator` del paquete `org.springframework.boot.health.contributor.*`
 - Grupos `liveness` y `readiness` para Kubernetes
 - En Spring Boot 4, necesitas configurar `show-details` y `show-components` explícitamente para exponer detalles de los componentes
 
@@ -533,12 +535,12 @@ Session estará en `http://localhost:8081`, speaker en `http://localhost:8082`.
 
 ## Troubleshooting
 
-### Error: "cannot find symbol class Health" o "package org.springframework.boot.health.contributor does not exist"
+### Error: "cannot find symbol class Health" o "package org.springframework.boot.actuate.health does not exist"
 
 **Solución:** Estás usando el import incorrecto. En Spring Boot 4, usa:
 ```java
-import org.springframework.boot.actuate.health.Health;
-import org.springframework.boot.actuate.health.HealthIndicator;
+import org.springframework.boot.health.contributor.Health;
+import org.springframework.boot.health.contributor.HealthIndicator;
 ```
 
 ### Error: "Failed to load ApplicationContext" en tests
@@ -574,7 +576,7 @@ new SpeakerFromService("s-1-1", "Emmanuel", "")
 
 Este laboratorio documenta cambios importantes en Spring Boot 4:
 
-1. **Paquete Health**: Migrado de `boot.health.contributor` a `boot.actuate.health`
+1. **Paquete Health**: En Spring Boot 4.0.x el paquete correcto es `boot.health.contributor.*` (diferente a versiones anteriores)
 2. **Testing**: Eliminadas `@MockBean` y `@AutoConfigureMockMvc`, requiere configuración manual
 3. **Health Details**: Requiere configuración explícita de `show-details` y `show-components`
 4. **Versión**: Se recomienda usar Spring Boot 4.0.3 o superior por mejoras en resolución de dependencias

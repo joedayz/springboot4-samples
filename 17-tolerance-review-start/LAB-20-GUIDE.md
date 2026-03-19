@@ -47,8 +47,9 @@ Crea o abre `session/src/main/java/com/bcp/training/conference/session/LivenessI
 ```java
 package com.bcp.training.conference.session;
 
-import org.springframework.boot.actuate.health.Health;
-import org.springframework.boot.actuate.health.HealthIndicator;
+
+import org.springframework.boot.health.contributor.Health;
+import org.springframework.boot.health.contributor.HealthIndicator;
 import org.springframework.stereotype.Component;
 
 @Component("serviceIsAlive")
@@ -70,8 +71,9 @@ Crea o abre `session/src/main/java/com/bcp/training/conference/session/Readiness
 ```java
 package com.bcp.training.conference.session;
 
-import org.springframework.boot.actuate.health.Health;
-import org.springframework.boot.actuate.health.HealthIndicator;
+
+import org.springframework.boot.health.contributor.Health;
+import org.springframework.boot.health.contributor.HealthIndicator;
 import org.springframework.stereotype.Component;
 
 @Component("serviceIsReady")
