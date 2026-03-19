@@ -3,6 +3,7 @@ package com.bcp.training;
 import io.micrometer.core.annotation.Counted;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Tags;
+import io.micrometer.core.instrument.Timer;
 import org.apache.commons.lang3.time.StopWatch;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -43,8 +44,13 @@ public class ExpenseResource {
         registry.counter("callsToPostExpenses").increment();
 
         // Micrometer registra Timer con sufijo *_seconds (segundos).
-        return registry.timer("expenseCreationTime")
-                .recordCallable(() -> expenseService.create(expense));
+        Timer timer = registry.timer("expenseCreationTime");
+        Timer.Sample sample = Timer.start(registry);
+        try {
+            return expenseService.create(expense);
+        } finally {
+            sample.stop(timer);
+        }
     }
 
     @GetMapping
