@@ -15,6 +15,7 @@ Proyectos migrados desde el repositorio **quarkus-bcp-2025** a **Spring Boot 4.0
 | **19-monitor-metrics-start** | Métricas (Actuator, Prometheus) | `expense-service` |
 | **19-monitor-metrics-solution** | Métricas + Dashboards (Prometheus, Grafana) | `expense-service` |
 | **20-monitor-trace-start** | Trazabilidad (adder, multiplier, solver) | `adder`, `multiplier`, `solver` |
+| **20-monitor-trace-solution** | Trazabilidad + Jaeger (OTLP) | `adder`, `multiplier`, `solver` |
 | **21-monitor-review-start** | Revisión monitor: speakers, sessions, dashboard React | `speakers`, `sessions`, `dashboard` |
 
 ## Equivalencias Quarkus → Spring Boot 4
