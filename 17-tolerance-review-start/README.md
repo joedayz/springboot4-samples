@@ -2,7 +2,7 @@
 
 Revisión de tolerancia a fallos: servicio **speaker** (JPA) y servicio **session** (JPA, RestClient al servicio speaker).
 
-**Guía del lab:** Ver [LAB-20-GUIDE.md](LAB-20-GUIDE.md) para las tareas (health, fallback, retry, circuit breaker, timeout) con Spring Boot 4 y Resilience4j.
+**Guía del lab:** Ver [17-17-17-17-17-17-LAB-20-GUIDE.md](17-17-17-17-17-17-LAB-20-GUIDE.md) para las tareas (health, fallback, retry, circuit breaker, timeout) con Spring Boot 4 y Resilience4j.
 
 ## Módulos
 

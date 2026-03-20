@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "lastScanTime": "2026-03-20T03:47:26.911224Z",
+  "organizations": [
+    {
+      "name": "08-reactive-architecture-solution",
+      "type": "OTHER",
+      "basePath": "/Users/josediaz/Projects/JoeDayz/springboot4-samples/08-reactive-architecture-solution",
+      "description": "Solución del laboratorio de arquitectura reactiva con Spring Boot 4.",
+      "keywords": ["08-reactive-architecture-solution", "src", "target"],
+      "codebasePaths": [],
+      "clients": [
+      ],
+      "products": [
+        {
+          "name": "src",
+          "basePath": "/Users/josediaz/Projects/JoeDayz/springboot4-samples/08-reactive-architecture-solution/products/src"
+        },
+        {
+          "name": "target",
+          "basePath": "/Users/josediaz/Projects/JoeDayz/springboot4-samples/08-reactive-architecture-solution/products/target"
+        }
+      ]
+    },
+    {
+      "name": "08-reactive-architecture-start",
+      "type": "OTHER",
+      "basePath": "/Users/josediaz/Projects/JoeDayz/springboot4-samples/08-reactive-architecture-start",
+      "description": "Laboratorio de arquitectura reactiva con Spring Boot 4.",
+      "keywords": ["08-reactive-architecture-start", "src", "target"],
+      "codebasePaths": [],
+      "clients": [
+      ],
+      "products": [
+        {
+          "name": "src",
+          "basePath": "/Users/josediaz/Projects/JoeDayz/springboot4-samples/08-reactive-architecture-start/products/src"
+        },
+        {
+          "name": "target",
+          "basePath": "/Users/josediaz/Projects/JoeDayz/springboot4-samples/08-reactive-architecture-start/products/target"
+        }
+      ]
+    }
+  ]
+}

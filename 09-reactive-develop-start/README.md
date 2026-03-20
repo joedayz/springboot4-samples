@@ -19,7 +19,7 @@ Implementar endpoints REST reactivos para el recurso `Suggestion` usando Spring 
 
 ## Guía completa
 
-Ver **[LAB 9 - SPRING BOOT REACTIVE DEVELOP.md](LAB%209%20-%20SPRING%20BOOT%20REACTIVE%20DEVELOP.md)** para la guía paso a paso (estructura similar a la guía Quarkus LAB-11-GUIA.md).
+Ver **[09-LAB 9 - SPRING BOOT REACTIVE DEVELOP.md](09-09-LAB%209%20-%20SPRING%20BOOT%20REACTIVE%20DEVELOP.md)** para la guía paso a paso (estructura similar a la guía Quarkus LAB-11-15-15-15-GUIA.md).
 
 ## Requisitos
 
